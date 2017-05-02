@@ -2,7 +2,7 @@
   "private": true,
   "name": "json-api-parser",
   "version": "1.0.0",
-  "description": "Utils class used to make conversion from a jsonApi format to a simplier json format (to use in forms/list/...) and to convert that simplier format to a jsonApi needed by the backend.",
+  "description": "Utils module used to translate from JSON API format to plain JSON and back.",
   "homepage": "https://github.com/alessandrocolleoni/json-api-parser#readme",
   "repository": "alessandrocolleoni/json-api-parser",
   "author": "Alessandro Colleoni <colleoni.al@gmail.com>",
@@ -10,8 +10,13 @@
     "Mattia Panzeri <mattia.panzeri93@gmail.com>"
   ],
   "license": "MPL-2.0",
-  "keywords": [],
-  "main": "dist/index.js",
+  "keywords": [
+    "json",
+    "json-api",
+    "parser"
+  ],
+  "main": "index.js",
+  "jsnext:main": "index.es.js",
   "babel": {
     "presets": [
       "latest",
@@ -21,10 +26,6 @@
       "transform-runtime"
     ]
   },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "extends": "airbnb-base"
-  },
   "dependencies": {
     "babel-runtime": "^6.11.6"
   },
@@ -33,30 +34,35 @@
     "babel-core": "^6.17.0",
     "babel-eslint": "^7.0.0",
     "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-env": "^1.4.0",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.16.3",
-    "babel-preset-env": "^1.4.0",
     "chai": "^4.0.0-canary.1",
     "coveralls": "^2.11.14",
     "del": "^2.2.2",
-    "eslint": "^3.8.0",
-    "eslint-config-airbnb-base": "^10.0.1",
-    "eslint-plugin-import": "^2.2.0",
     "istanbul": "^1.1.0-alpha.1",
+    "lodash": "^4.17.4",
     "mocha": "^3.1.2",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
     "sinon": "^2.0.0-pre.3",
-    "lodash": "^4.17.4"
+    "snazzy": "^7.0.0",
+    "standard": "*"
   },
   "scripts": {
-    "lint": "eslint src test tools",
+    "lint": "standard './src/**.js' './test/**.js' | snazzy",
+    "lint:fix": "standard --fix './src/**.js' './test/**.js' | snazzy",
+    "pretest": "npm run lint",
     "test": "mocha --compilers js:babel-register",
     "test:watch": "mocha --compilers js:babel-register --reporter min --watch",
     "test:cover": "babel-node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "prebuild": "npm run test",
     "build": "node tools/build",
     "prepublish": "npm run build"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }
