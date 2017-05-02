@@ -59,23 +59,27 @@ function deserialize (jsonApiModel) {
     }
   }
 
-  let data = clone(jsonApiModel.data)
-  let included = clone(jsonApiModel.included)
+  const data = {...jsonApiModel.data}
 
-  let jsonModel = clone(data.attributes)
-  jsonModel.id = data.id
-  jsonModel.type = data.type
+  let jsonModel = {...data.attributes, id: data.id, type: data.type}
 
   if (data.relationships) {
     // TODO: Relationships checks
-    jsonModel.relationships = cloneDeep(data.relationships)
+    jsonModel.relationships = {...data.relationships}
   }
 
   if (data.meta) {
-    jsonApiModel.meta = cloneDeep(data.meta)
+    jsonApiModel.meta = {...data.meta}
   }
 
-  if (included) {
+  invariant(
+    isUndefined(jsonApiModel.included) || Array.isArray(jsonApiModel.included),
+    `Malformed jsonapi model.\n
+    In a compound document, all included resources MUST be represented as an array of resource objects in a top-level included member.\n
+    Visit: http://jsonapi.org/format/#document-compound-documents`
+  )
+  const included = [].concat(jsonApiModel.included)
+  if (included.length > 0) {
     // TODO: inclusion checks
     jsonModel.included = {}
     let mapRelationships = new Map()
