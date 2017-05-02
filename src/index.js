@@ -8,8 +8,7 @@
 
 import _ from 'lodash'
 
-function deserialize(jsonApiModel) {
-
+function deserialize (jsonApiModel) {
   if (_.isUndefined(jsonApiModel.data) && _.isUndefined(jsonApiModel.errors) && _.isUndefined(jsonApiModel.meta)) {
     throw new Error(
       `Malformed jsonapi model.\n 
@@ -24,7 +23,6 @@ function deserialize(jsonApiModel) {
             If a document does not contain a top-level data key, the included member MUST NOT be present either.\n
             Visit: http://jsonapi.org/format/#document-top-level`)
   }
-
 
   if (!Array.isArray(jsonApiModel.data)) {
     if (!isResourceIdentifier(jsonApiModel.data) || _.isNull(jsonApiModel.data)) {
@@ -44,14 +42,12 @@ function deserialize(jsonApiModel) {
     }
   }
 
-
   let data = _.clone(jsonApiModel.data)
   let included = _.clone(jsonApiModel.included)
 
   let jsonModel = _.clone(data.attributes)
   jsonModel.id = data.id
   jsonModel.type = data.type
-
 
   if (data.relationships) {
     // TODO: Relationships checks
@@ -73,7 +69,7 @@ function deserialize(jsonApiModel) {
   return jsonModel
 }
 
-function serialize() {
+function serialize () {
 
 }
 
@@ -87,7 +83,7 @@ function serialize() {
  * @param includedData
  * @returns {*}
  */
-function populateInclude(jsonModel, jsonApiModel, includedData, mapRelationships) {
+function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationships) {
   for (let key in jsonApiModel.relationships) {
     let relationshipData = jsonApiModel.relationships[key].data
     jsonModel.included[key] = {}
@@ -105,7 +101,6 @@ function populateInclude(jsonModel, jsonApiModel, includedData, mapRelationships
           let itemConverted = _.clone(jsonApiModel.attributes)
           itemConverted.id = itemIncludedJson.id
 
-
           if (itemIncludedJson.meta) {
             itemConverted.meta = _.clone(itemIncludedJson.meta)
           }
@@ -116,9 +111,9 @@ function populateInclude(jsonModel, jsonApiModel, includedData, mapRelationships
             itemConverted.relationships = _.clone(itemIncludedJson.relationships)
             mapRelationships.set(actualRelationship.id, itemConverted)
           }
-          /*else if (itemIncludedJson.relationships && mapRelationships[actualRelationship.id] && mapRelationships[actualRelationship.id].data) {
+          /* else if (itemIncludedJson.relationships && mapRelationships[actualRelationship.id] && mapRelationships[actualRelationship.id].data) {
            itemConverted = mapRelationships[actualRelationship.id].data
-           }*/
+           } */
 
           array.push(itemConverted)
         }
@@ -129,7 +124,6 @@ function populateInclude(jsonModel, jsonApiModel, includedData, mapRelationships
         let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === relationshipData.id)
 
         if (itemIncludedJson) {
-
           itemConverted = _.clone(itemIncludedJson)
           itemConverted.id = itemIncludedJson.id
 
@@ -142,11 +136,11 @@ function populateInclude(jsonModel, jsonApiModel, includedData, mapRelationships
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
             itemConverted.relationships = _.clone(itemIncludedJson.relationships)
             mapRelationships.set(relationshipData.id, itemConverted)
-            //mapRelationships[relationshipData.id].data = itemConverted;
+            // mapRelationships[relationshipData.id].data = itemConverted;
           }
-          /*else if (itemIncludedJson.relationships && mapRelationships[relationshipData.id] && mapRelationships[relationshipData.id].data) {
+          /* else if (itemIncludedJson.relationships && mapRelationships[relationshipData.id] && mapRelationships[relationshipData.id].data) {
            mapRelationships = mapRelationships[relationshipData.id].data;
-           }*/
+           } */
 
           jsonModel.included[key] = itemConverted
         }
@@ -157,12 +151,11 @@ function populateInclude(jsonModel, jsonApiModel, includedData, mapRelationships
   return jsonModel.included
 }
 
-
-function isResourceIdentifier(obj) {
+function isResourceIdentifier (obj) {
   return _.conformsTo(obj,
     {
-      "id": id => !_.isNil(id),
-      "type": type => !_.isNil(type)
+      'id': id => !_.isNil(id),
+      'type': type => !_.isNil(type)
     })
 }
 
