@@ -6,56 +6,65 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import _ from 'lodash'
+import {
+  clone,
+  cloneDeep,
+  conformsTo,
+  isNil,
+  isNull,
+  isUndefined
+} from 'lodash'
+import invariant from 'fbjs/lib/invariant'
 
 function deserialize (jsonApiModel) {
-  if (_.isUndefined(jsonApiModel.data) && _.isUndefined(jsonApiModel.errors) && _.isUndefined(jsonApiModel.meta)) {
-    throw new Error(
-      `Malformed jsonapi model.\n 
+  // TODO: refactor
+  invariant(
+    isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors) && isUndefined(jsonApiModel.meta),
+    `Malformed jsonapi model.\n 
             A document MUST contain at least one of the following top-level members:\n
             data, errors or meta\n
-            Visit: http://jsonapi.org/format/#document-top-level`)
-  }
+            Visit: http://jsonapi.org/format/#document-top-level`
+  )
 
-  if (_.isUndefined(jsonApiModel.data) && jsonApiModel.included) {
-    throw new Error(`
-            Malformed jsonapi model.\n
-            If a document does not contain a top-level data key, the included member MUST NOT be present either.\n
-            Visit: http://jsonapi.org/format/#document-top-level`)
-  }
+  invariant(
+    isUndefined(jsonApiModel.data) && jsonApiModel.included,
+    `Malformed jsonapi model.\n
+    If a document does not contain a top-level data key, the included member MUST NOT be present either.\n
+    Visit: http://jsonapi.org/format/#document-top-level`
+  )
 
   if (!Array.isArray(jsonApiModel.data)) {
-    if (!isResourceIdentifier(jsonApiModel.data) || _.isNull(jsonApiModel.data)) {
-      throw new Error(`
-            Malformed jsonapi model.\n
-            Primary data MUST be either: a single resource object, a single resource identifier object, or null, for requests that target single resources.\n
-            Visit: http://jsonapi.org/format/#document-top-level`)
-    }
+    invariant(
+      !isResourceIdentifier(jsonApiModel.data) || isNull(jsonApiModel.data),
+      `Malformed jsonapi model.\n
+     Primary data MUST be either: a single resource object, a single resource identifier object, or null, for requests that target single resources.\n
+     Visit: http://jsonapi.org/format/#document-top-level`
+    )
   } else {
     for (let obj in jsonApiModel.data) {
-      if (obj && !isResourceIdentifier(obj)) {
-        throw new Error(`
-                Malformed jsonapi model.\n
-                Primary data MUST be either: an array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.\n
-                Visit: http://jsonapi.org/format/#document-top-level`)
-      }
+      invariant(
+        obj && !isResourceIdentifier(obj),
+        `Malformed jsonapi model.\n
+        Primary data MUST be either: an array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.\n
+        Visit: http://jsonapi.org/format/#document-top-level`
+      )
     }
   }
 
-  let data = _.clone(jsonApiModel.data)
-  let included = _.clone(jsonApiModel.included)
+  let data = clone(jsonApiModel.data)
+  let included = clone(jsonApiModel.included)
 
-  let jsonModel = _.clone(data.attributes)
+  let jsonModel = clone(data.attributes)
   jsonModel.id = data.id
   jsonModel.type = data.type
 
   if (data.relationships) {
     // TODO: Relationships checks
-    jsonModel.relationships = _.cloneDeep(data.relationships)
+    jsonModel.relationships = cloneDeep(data.relationships)
   }
 
   if (data.meta) {
-    jsonApiModel.meta = _.cloneDeep(data.meta)
+    jsonApiModel.meta = cloneDeep(data.meta)
   }
 
   if (included) {
@@ -98,22 +107,21 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
             continue
           }
 
-          let itemConverted = _.clone(jsonApiModel.attributes)
+          let itemConverted = clone(jsonApiModel.attributes)
           itemConverted.id = itemIncludedJson.id
 
           if (itemIncludedJson.meta) {
-            itemConverted.meta = _.clone(itemIncludedJson.meta)
+            itemConverted.meta = clone(itemIncludedJson.meta)
           }
 
           if (itemIncludedJson.relationships && !mapRelationships.has(actualRelationship.id)) {
             mapRelationships.set(actualRelationship.id, null)
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            itemConverted.relationships = _.clone(itemIncludedJson.relationships)
+            itemConverted.relationships = clone(itemIncludedJson.relationships)
             mapRelationships.set(actualRelationship.id, itemConverted)
+          } else if (itemIncludedJson.relationships && mapRelationships.get(actualRelationship.id)) {
+            itemConverted = mapRelationships[actualRelationship.id].data
           }
-          /* else if (itemIncludedJson.relationships && mapRelationships[actualRelationship.id] && mapRelationships[actualRelationship.id].data) {
-           itemConverted = mapRelationships[actualRelationship.id].data
-           } */
 
           array.push(itemConverted)
         }
@@ -124,23 +132,22 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
         let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === relationshipData.id)
 
         if (itemIncludedJson) {
-          itemConverted = _.clone(itemIncludedJson)
+          itemConverted = clone(itemIncludedJson)
           itemConverted.id = itemIncludedJson.id
 
           if (itemIncludedJson.meta) {
-            itemConverted.meta = _.clone(itemIncludedJson.meta)
+            itemConverted.meta = clone(itemIncludedJson.meta)
           }
 
           if (itemIncludedJson.relationships && !mapRelationships.has(relationshipData.id)) {
             mapRelationships.set(relationshipData.id, null)
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            itemConverted.relationships = _.clone(itemIncludedJson.relationships)
+            itemConverted.relationships = clone(itemIncludedJson.relationships)
             mapRelationships.set(relationshipData.id, itemConverted)
-            // mapRelationships[relationshipData.id].data = itemConverted;
+            mapRelationships.set(relationshipData.id, itemConverted)
+          } else if (itemIncludedJson.relationships && mapRelationships.get(relationshipData.id)) {
+            mapRelationships = mapRelationships[relationshipData.id].data
           }
-          /* else if (itemIncludedJson.relationships && mapRelationships[relationshipData.id] && mapRelationships[relationshipData.id].data) {
-           mapRelationships = mapRelationships[relationshipData.id].data;
-           } */
 
           jsonModel.included[key] = itemConverted
         }
@@ -152,11 +159,11 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
 }
 
 function isResourceIdentifier (obj) {
-  return _.conformsTo(obj,
+  return conformsTo(obj,
     {
-      'id': id => !_.isNil(id),
-      'type': type => !_.isNil(type)
+      'id': id => !isNil(id),
+      'type': type => !isNil(type)
     })
 }
 
-export {serialize, deserialize}
+export { serialize, deserialize }

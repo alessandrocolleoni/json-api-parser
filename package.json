@@ -23,11 +23,13 @@
       "stage-0"
     ],
     "plugins": [
-      "transform-runtime"
+      "transform-runtime",
+      "fbjs-scripts/babel-6/dev-expression"
     ]
   },
   "dependencies": {
-    "babel-runtime": "^6.11.6"
+    "babel-runtime": "^6.11.6",
+    "fbjs": "next"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -41,6 +43,7 @@
     "chai": "^4.0.0-canary.1",
     "coveralls": "^2.11.14",
     "del": "^2.2.2",
+    "fbjs-scripts": "next",
     "istanbul": "^1.1.0-alpha.1",
     "lodash": "^4.17.4",
     "mocha": "^3.1.2",
