@@ -19,23 +19,20 @@ import invariant from 'fbjs/lib/invariant'
 function deserialize (jsonApiModel) {
   // TODO: refactor
   invariant(
-    isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors) && isUndefined(jsonApiModel.meta),
-    `Malformed jsonapi model.\n 
-            A document MUST contain at least one of the following top-level members:\n
-            data, errors or meta\n
-            Visit: http://jsonapi.org/format/#document-top-level`
+    !(isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors) && isUndefined(jsonApiModel.meta)),
+    `Malformed jsonapi model.A document MUST contain at least one of the following top-level members: data, errors or meta\nVisit: http://jsonapi.org/format/#document-top-level`
   )
 
   invariant(
-    isUndefined(jsonApiModel.data) && jsonApiModel.included,
+    !(isUndefined(jsonApiModel.data) && jsonApiModel.included),
     `Malformed jsonapi model.\n
-    If a document does not contain a top-level data key, the included member MUST NOT be present either.\n
+    If a document does NOT contain a top-level data key, the included member MUST NOT be present either.\n
     Visit: http://jsonapi.org/format/#document-top-level`
   )
 
   if (!Array.isArray(jsonApiModel.data)) {
     invariant(
-      !isResourceIdentifier(jsonApiModel.data) || isNull(jsonApiModel.data),
+      !(!isResourceIdentifier(jsonApiModel.data) || isNull(jsonApiModel.data)),
       `Malformed jsonapi model.\n
      Primary data MUST be either: a single resource object, a single resource identifier object, or null, for requests that target single resources.\n
      Visit: http://jsonapi.org/format/#document-top-level`
