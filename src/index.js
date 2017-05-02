@@ -75,7 +75,38 @@ function deserialize (jsonApiModel) {
   return jsonModel
 }
 
-function serialize () {
+function serialize (jsonModel) {
+  let jsonApiModel = {
+    data: {
+      attributes: {}
+    }
+  }
+
+  let jsonModelClone = cloneDeep(jsonModel)
+  let {relationships} = jsonModelClone
+
+  jsonApiModel.data.id = jsonModelClone.id
+  jsonApiModel.data.type = jsonModelClone.type
+
+  delete jsonModelClone.id
+  delete jsonModelClone.type
+  delete jsonModelClone.relationships
+  delete jsonModelClone.included
+  delete jsonModelClone.meta
+
+  if (relationships) {
+    jsonApiModel.data.relationships = {}
+    for (let key in relationships) {
+      jsonApiModel.data.relationships[key] = relationships[key]
+    }
+  }
+  delete jsonModelClone.relationships
+
+  for (let key in jsonModelClone) {
+    jsonApiModel.data.attributes[key] = jsonModelClone[key]
+  }
+
+  return jsonApiModel;
 
 }
 
