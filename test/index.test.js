@@ -7,19 +7,22 @@
  */
 
 /* eslint-env mocha */
-import assert from 'assert'
+import { expect } from 'chai'
 import { deserialize } from '../src/index'
 
-// TODO: errors
-/*
+describe('Compliancy testing', () => {
+  describe('A document MUST contain at least one of the following top-level members: data, errors or meta', () => {
+    describe('If the document does NOT contains any of the REQUIRED fields', () => {
+      // Setup
+      const document = {}
 
-test('A document MUST contain at least one of the following top-level members: data, errors or meta', () => {
-
-    let toDeserialize = {}
-    let deserialized = deserialize(toDeserialize)
-
+      it('should raise error', () => {
+      // Expectations
+        expect(deserialize.bind(document)).to.throw(Error)
+      })
+    })
+  })
 })
-*/
 
 // TODO: parsing
 describe('Parse attributes', () => {
@@ -38,8 +41,8 @@ describe('Parse attributes', () => {
   it('should deserialize object', () => {
     const deserialized = deserialize(toDeserialize)
 
-    assert.equal(deserialized.id, '80ab0682-e7d1-4800-b12a-efca9e2f15c0')
-    assert.equal(deserialized.type, 'apps')
-    assert.equal(Object.keys(deserialized).length, 5)
+    expect(deserialized.id).to.equal('80ab0682-e7d1-4800-b12a-efca9e2f15c0')
+    expect(deserialized.type).to.equal('apps')
+    expect(Object.keys(deserialized).length).to.equal(5)
   })
 })
