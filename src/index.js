@@ -94,20 +94,19 @@ function serialize (jsonModel) {
   delete jsonModelClone.included
   delete jsonModelClone.meta
 
+  for (let key in jsonModelClone) {
+    jsonApiModel.data.attributes[key] = jsonModelClone[key]
+  }
+
   if (relationships) {
+    // TODO: improve relationships
     jsonApiModel.data.relationships = {}
     for (let key in relationships) {
       jsonApiModel.data.relationships[key] = relationships[key]
     }
   }
-  delete jsonModelClone.relationships
 
-  for (let key in jsonModelClone) {
-    jsonApiModel.data.attributes[key] = jsonModelClone[key]
-  }
-
-  return jsonApiModel;
-
+  return jsonApiModel
 }
 
 /**
