@@ -69,7 +69,6 @@ function deserialize (jsonApiModel) {
     jsonModel.included = {}
     let mapRelationships = new Map()
     jsonModel.included = populateInclude(jsonModel, data, included, mapRelationships)
-    console.log(mapRelationships)
   }
 
   return jsonModel
