@@ -9,17 +9,173 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import { serialize, deserialize } from '../src/index'
+import testData from './test-data.json'
 
-describe('Compliancy testing', () => {
-  describe('A document MUST contain at least one of the following top-level members: data, errors or meta', () => {
-    describe('If the document does NOT contains any of the REQUIRED fields', () => {
+describe('Top Level:', () => {
+  describe('A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”.', () => {
+    it('should raise error on undefined', () => {
       // Setup
-      const document = {}
-
-      it('should raise error', () => {
+      const document = undefined
       // Expectations
-        expect(deserialize.bind(document)).to.throw(Error)
-      })
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+    })
+
+    it('should raise error on null', () => {
+      // Setup
+      const document = null
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+    })
+
+    it('should raise error on number', () => {
+      // Setup
+      const document = 30
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+    })
+
+    it('should raise error on string', () => {
+      // Setup
+      const document = ''
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+    })
+  })
+
+  describe('A document MUST contain at least one of the following top-level members: data, errors or meta', () => {
+    it('should raise error on empty document', () => {
+        // Setup
+      let document = testData.emptyDocument
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/A document MUST contain at least one of the following top-level members: data, errors or meta/)
+    })
+  })
+
+  describe('The members data and errors MUST NOT coexist in the same document.', () => {
+    it('should raise an error on malformed document', () => {
+      // Setup
+      const document = {
+        data: testData.fakeDataResourceIdentifier,
+        errors: testData.fakeErrorObject
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/The members data and errors MUST NOT coexist in the same document./)
+    })
+  })
+
+  describe('If a document does not contain a top-level data key, the included member MUST NOT be present either.', () => {
+    it('should raise an error on malformed document', () => {
+      // Setup
+      const document = {
+        errors: testData.fakeErrorObject,
+        included: []
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/If a document does NOT contain a top-level data key, the included member MUST NOT be present either./)
+    })
+  })
+})
+
+describe('The document’s "primary data" is a representation of the resource or collection of resources targeted by a request.', () => {
+  describe('Primary data MUST be either:', () => {
+    it('- a single resource object', () => {
+      // Setup
+      const document = {
+        'data': testData.fakeDataResourceObject
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).not.to.throw(Error)
+    })
+
+    it('- a single resource identifier object', () => {
+      // Setup
+      const document = {
+        'data': testData.fakeDataResourceIdentifier
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).not.to.throw(Error)
+    })
+
+    it('- null', () => {
+      // Setup
+      const document = {
+        'data': null
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).not.to.throw(Error)
+    })
+
+    it('- an array of resource objects', () => {
+      // Setup
+      const document = {
+        'data': [
+          testData.fakeDataResourceObject,
+          testData.fakeDataResourceObject
+        ]
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).not.to.throw(Error)
+    })
+
+    it('- an array of resource identifier objects', () => {
+      // Setup
+      const document = {
+        'data': [
+          testData.fakeDataResourceIdentifier,
+          testData.fakeDataResourceIdentifier
+        ]
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).not.to.throw(Error)
+    })
+
+    it('- an empty array', () => {
+      // Setup
+      const document = {
+        'data': []
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).not.to.throw(Error)
+    })
+  })
+})
+
+describe('"Resource objects" appear in a JSON API document to represent resources.', () => {
+  it('A resource object MUST contain at least the following top-level members: id and type', () => {
+    // Setup
+    const document = {
+      'data': testData.invalidResourceObject
+    }
+    // Expectations
+    expect(() => { deserialize(document) }).to.throw(Error)
+  })
+
+  describe('The values of the id and type members MUST be strings.', () => {
+    it('should raise error when both "id" and "type" are NOT string', () => {
+      // Setup
+      const document = {
+        'data': testData.invalidIdTypeResourceObject
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
+    })
+
+    it('should raise error when "id" is NOT string', () => {
+      // Setup
+      const document = {
+        'data': testData.invalidIdResourceObject
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
+    })
+
+    it('should raise error when "type" member is NOT string', () => {
+      // Setup
+      const document = {
+        'data': testData.invalidTypeResourceObject
+      }
+      // Expectations
+      expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
     })
   })
 })
