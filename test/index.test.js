@@ -17,28 +17,28 @@ describe('Top Level:', () => {
       // Setup
       const document = undefined
       // Expectations
-      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data/)
     })
 
     it('should raise error on null', () => {
       // Setup
       const document = null
       // Expectations
-      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data/)
     })
 
     it('should raise error on number', () => {
       // Setup
       const document = 30
       // Expectations
-      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data/)
     })
 
     it('should raise error on string', () => {
       // Setup
       const document = ''
       // Expectations
-      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”./)
+      expect(() => { deserialize(document) }).to.throw(/A JSON object MUST be at the root of every JSON API request and response containing data/)
     })
   })
 

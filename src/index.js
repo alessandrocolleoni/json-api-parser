@@ -12,15 +12,26 @@ import {
   conformsTo,
   isNil,
   isNull,
-  isUndefined
+  isUndefined,
+  isObject
 } from 'lodash'
 import invariant from 'fbjs/lib/invariant'
 
 function deserialize (jsonApiModel) {
   // TODO: refactor
   invariant(
+    isObject(jsonApiModel),
+    `Malformed jsonapi model. A JSON object MUST be at the root of every JSON API request and response containing data.\nVisit: http://jsonapi.org/format/#document-top-level`
+  )
+
+  invariant(
     !(isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors) && isUndefined(jsonApiModel.meta)),
     `Malformed jsonapi model.A document MUST contain at least one of the following top-level members: data, errors or meta\nVisit: http://jsonapi.org/format/#document-top-level`
+  )
+
+  invariant(
+    (!isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors)) || (isUndefined(jsonApiModel.data) && !isUndefined(jsonApiModel.errors)),
+    `Malformed jsonapi model. The members data and errors MUST NOT coexist in the same document.\nVisit: http://jsonapi.org/format/#document-top-level`
   )
 
   invariant(
