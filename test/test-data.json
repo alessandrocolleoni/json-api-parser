@@ -32,5 +32,39 @@
   "invalidTypeResourceObject": {
     "id": "1",
     "type": 0
+  },
+  "attributesRelationshipsCrossedNamespaceObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "attributes": {
+        "author": "pippo"
+      },
+      "relationships": {
+        "author": {
+          "id": "1",
+          "type": "author",
+          "name": "pippo",
+          "gender": "male"
+        }
+      }
+    }
+  },
+  "attributesRelationshipsParentCrossedNamespaceObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "attributes": {
+        "id": "pippo-1"
+      },
+      "relationships": {
+        "type": {
+          "id": "1",
+          "type": "author",
+          "name": "pippo",
+          "gender": "male"
+        }
+      }
+    }
   }
 }

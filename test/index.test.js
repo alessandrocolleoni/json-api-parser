@@ -150,32 +150,198 @@ describe('"Resource objects" appear in a JSON API document to represent resource
     expect(() => { deserialize(document) }).to.throw(Error)
   })
 
-  describe('The values of the id and type members MUST be strings.', () => {
-    it('should raise error when both "id" and "type" are NOT string', () => {
-      // Setup
-      const document = {
-        'data': testData.invalidIdTypeResourceObject
-      }
-      // Expectations
-      expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
-    })
+  describe('Identification:', () => {
+    describe('The values of the id and type members MUST be strings.', () => {
+      it('should raise error when both "id" and "type" are NOT string', () => {
+        // Setup
+        const document = {
+          'data': testData.invalidIdTypeResourceObject
+        }
+        // Expectations
+        expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
+      })
 
-    it('should raise error when "id" is NOT string', () => {
-      // Setup
-      const document = {
-        'data': testData.invalidIdResourceObject
-      }
-      // Expectations
-      expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
-    })
+      it('should raise error when "id" is NOT string', () => {
+        // Setup
+        const document = {
+          'data': testData.invalidIdResourceObject
+        }
+        // Expectations
+        expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
+      })
 
-    it('should raise error when "type" member is NOT string', () => {
-      // Setup
-      const document = {
-        'data': testData.invalidTypeResourceObject
-      }
-      // Expectations
-      expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
+      it('should raise error when "type" member is NOT string', () => {
+        // Setup
+        const document = {
+          'data': testData.invalidTypeResourceObject
+        }
+        // Expectations
+        expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
+      })
+    })
+  })
+
+  describe('Fields:', () => {
+    describe('Fields for a resource object MUST share a common namespace with each other and with type and id.', () => {
+      it('a resource can NOT have an "attribute" and "relationship" with the same name', () => {
+        // Setup
+        const document = testData.attributesRelationshipsCrossedNamespaceObject
+        // Expectations
+        expect(() => deserialize(document)).to.throw(/a resource can NOT have an "attribute" and "relationship" with the same name/)
+      })
+
+      it('nor can it have an attribute or relationship named "type" or "id".', () => {
+        // Setup
+        const document = testData.attributesRelationshipsParentCrossedNamespaceObject
+        // Expectations
+        expect(() => deserialize(document)).to.throw(/nor can it have an attribute or relationship named "type" or "id"/)
+      })
+
+      describe('Attributes:', () => {
+        describe('The value of the attributes key MUST be an object (an "attributes object").', () => {
+          it('should raise error on undefined', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': undefined
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          })
+
+          it('should raise error on null', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': null
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          })
+
+          it('should raise error on number', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': undefined
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          })
+
+          it('should raise error on string', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': undefined
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          })
+        })
+
+        describe('any object that constitutes an attribute MUST NOT contain', () => {
+          it('a "relationships" member', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': {
+                  'object2': {
+                    'relationships': {
+                      'test': 'fail'
+                    }
+                  }
+                }
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          })
+
+          it('a "links" member', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': {
+                  'object1': {
+                    'links': {
+                      'test': 'fail'
+                    }
+                  }
+                }
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          })
+        })
+
+        describe('any object that is contained in an attribute MUST NOT contain', () => {
+          it('a "relationships" member', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': {
+                  'object2': {
+                    'subObject2': {
+                      'relationships': {
+                        'test': 'fail'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          })
+
+          it('a "links" member', () => {
+            // Setup
+            const document = {
+              'data': {
+                'id': '1',
+                'type': 'test',
+                'attributes': {
+                  'object1': {
+                    'subObject1': {
+                      'links': {
+                        'test': 'fail'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            // Expectations
+            expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          })
+        })
+      })
+
+      describe('Relationships:', () => {
+        it('coming soon...', () => {
+
+        })
+      })
     })
   })
 })
