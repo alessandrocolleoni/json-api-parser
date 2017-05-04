@@ -187,14 +187,14 @@ describe('"Resource objects" appear in a JSON API document to represent resource
         // Setup
         const document = testData.attributesRelationshipsCrossedNamespaceObject
         // Expectations
-        expect(() => deserialize(document)).to.throw(/a resource can NOT have an "attribute" and "relationship" with the same name/)
+        expect(() => deserialize(document)).to.throw(/A resource can NOT have an "attribute" and "relationship" with the same name/)
       })
 
       it('nor can it have an attribute or relationship named "type" or "id".', () => {
         // Setup
         const document = testData.attributesRelationshipsParentCrossedNamespaceObject
         // Expectations
-        expect(() => deserialize(document)).to.throw(/nor can it have an attribute or relationship named "type" or "id"/)
+        expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
       })
 
       describe('Attributes:', () => {

@@ -18,39 +18,43 @@ import {
 import invariant from 'fbjs/lib/invariant'
 
 function deserialize (jsonApiModel) {
-  // TODO: refactor
   invariant(
     isObject(jsonApiModel),
     `Malformed jsonapi model. A JSON object MUST be at the root of every JSON API request and response containing data.\nVisit: http://jsonapi.org/format/#document-top-level`
   )
 
+  const {data, errors, meta, included} = jsonApiModel
+
+  // TODO: refactor
   invariant(
-    !(isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors) && isUndefined(jsonApiModel.meta)),
+    !(isUndefined(data) && isUndefined(errors) && isUndefined(meta)),
     `Malformed jsonapi model.A document MUST contain at least one of the following top-level members: data, errors or meta\nVisit: http://jsonapi.org/format/#document-top-level`
   )
 
   invariant(
-    (!isUndefined(jsonApiModel.data) && isUndefined(jsonApiModel.errors)) || (isUndefined(jsonApiModel.data) && !isUndefined(jsonApiModel.errors)),
+    (!isUndefined(data) && isUndefined(errors)) || (isUndefined(data) && !isUndefined(errors)),
     `Malformed jsonapi model. The members data and errors MUST NOT coexist in the same document.\nVisit: http://jsonapi.org/format/#document-top-level`
   )
 
   invariant(
-    !(isUndefined(jsonApiModel.data) && jsonApiModel.included),
+    !(isUndefined(data) && included),
     `Malformed jsonapi model.\n
     If a document does NOT contain a top-level data key, the included member MUST NOT be present either.\n
     Visit: http://jsonapi.org/format/#document-top-level`
   )
 
-  if (!Array.isArray(jsonApiModel.data)) {
+  if (!Array.isArray(data)) {
     invariant(
-      isResourceIdentifier(jsonApiModel.data) || isNull(jsonApiModel.data),
+      isResourceIdentifier(data) || isNull(data),
       `Malformed jsonapi model.\n
      Primary data MUST be either: a single resource object, a single resource identifier object, or null, for requests that target single resources.\n
      Visit: http://jsonapi.org/format/#document-top-level`
     )
-    idAndTypesAreString(jsonApiModel.data)
+
+    idAndTypesAreString(data)
+    fieldsCommonNamespace(data)
   } else {
-    for (let obj of jsonApiModel.data) {
+    for (let obj of data) {
       invariant(
         obj && isResourceIdentifier(obj),
         `Malformed jsonapi model.\n
@@ -58,37 +62,42 @@ function deserialize (jsonApiModel) {
         Visit: http://jsonapi.org/format/#document-top-level`
       )
       idAndTypesAreString(obj)
+      fieldsCommonNamespace(obj)
     }
   }
 
-  const data = {...jsonApiModel.data}
+  // TODO: refactor with errors
+  if (data) {
+    let jsonModel = {...data.attributes, id: data.id, type: data.type}
 
-  let jsonModel = {...data.attributes, id: data.id, type: data.type}
+    if (data.relationships) {
+      // TODO: Relationships checks
+      jsonModel.relationships = {...data.relationships}
+    }
 
-  if (data.relationships) {
-    // TODO: Relationships checks
-    jsonModel.relationships = {...data.relationships}
-  }
+    if (data.meta) {
+      jsonApiModel.meta = {...data.meta}
+    }
 
-  if (data.meta) {
-    jsonApiModel.meta = {...data.meta}
-  }
-
-  invariant(
-    isUndefined(jsonApiModel.included) || Array.isArray(jsonApiModel.included),
-    `Malformed jsonapi model.\n
+    invariant(
+      isUndefined(jsonApiModel.included) || Array.isArray(jsonApiModel.included),
+      `Malformed jsonapi model.\n
     In a compound document, all included resources MUST be represented as an array of resource objects in a top-level included member.\n
     Visit: http://jsonapi.org/format/#document-compound-documents`
-  )
-  const included = [].concat(jsonApiModel.included)
-  if (included.length > 0) {
-    // TODO: inclusion checks
-    jsonModel.included = {}
-    let mapRelationships = new Map()
-    jsonModel.included = populateInclude(jsonModel, data, included, mapRelationships)
+    )
+
+    if (included && included.length > 0) {
+      // TODO: inclusion checks
+      const incl = [].concat(jsonApiModel.included)
+      jsonModel.included = {}
+      let mapRelationships = new Map()
+      jsonModel.included = populateInclude(jsonModel, data, incl, mapRelationships)
+    }
+    return jsonModel
   }
 
-  return jsonModel
+  // TODO: errors
+  return {}
 }
 
 function serialize (jsonModel) {
@@ -217,6 +226,30 @@ function idAndTypesAreString (obj) {
      Every resource object MUST contain an id member and a type member. The values of the id and type members MUST be strings.\n
      Visit: http://jsonapi.org/format/#document-resource-object-identification`
     )
+  }
+}
+
+function fieldsCommonNamespace (obj) {
+  if (!obj) {
+    return
+  }
+  let {attributes, relationships} = obj
+  if (relationships) {
+    invariant(
+      !relationships.hasOwnProperty('id') && !relationships.hasOwnProperty('type') && !attributes.hasOwnProperty('id') && !attributes.hasOwnProperty('type'),
+      `Malformed jsonapi model.\n
+       A resource can not have an "attribute" or "relationship" named type or id.\n
+       Visit: http://jsonapi.org/format/#document-resource-object-fields`
+    )
+
+    for (let key in attributes) {
+      invariant(
+        !relationships.hasOwnProperty(key),
+        `Malformed jsonapi model.\n
+         A resource can NOT have an "attribute" and "relationship" with the same name.\n
+         Visit: http://jsonapi.org/format/#document-resource-object-fields`
+      )
+    }
   }
 }
 
