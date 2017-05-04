@@ -89,5 +89,152 @@
         }
       }
     }
+  },
+  "relationshipNullObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": null
+    }
+  },
+  "relationshipStringObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": "null"
+    }
+  },
+  "relationshipNumberObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": 6
+    }
+  },
+  "relationshipEmptyObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {}
+    }
+  },
+  "relationshipEmptyLinksObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "links": {}
+      }
+    }
+  },
+  "relationshipDataNullObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "data": null
+      }
+    }
+  },
+  "relationshipDataEmptyArrayObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "data": []
+      }
+    }
+  },
+  "relationshipDataOneObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "data": {
+          "id": "6",
+          "type": "relationship"
+        }
+      }
+    }
+  },
+  "relationshipDataManyObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "data": [
+          {
+            "id": "6",
+            "type": "relationship"
+          },
+          {
+            "id": "66",
+            "type": "relationship"
+          }
+        ]
+      }
+    }
+  },
+  "relationshipDataNumberObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "data": 6
+      }
+    }
+  },
+  "relationshipDataStringObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "data": "fails"
+      }
+    }
+  },
+  "relationshipMetaObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "meta": {
+          "copyright": "Copyright 2015 Example Corp.",
+          "authors": [
+            "Yehuda Katz",
+            "Steve Klabnik",
+            "Dan Gebhardt",
+            "Tyler Kellen"
+          ]
+        }
+      }
+    }
+  },
+  "relationshipMetaStringObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "meta": "fails"
+      }
+    }
+  },
+  "relationshipMetaNullObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "meta": null
+      }
+    }
+  },
+  "relationshipMetaNumberObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "meta": 6
+      }
+    }
   }
 }
