@@ -66,5 +66,28 @@
         }
       }
     }
+  },
+  "attributesParentCrossedNamespaceObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "attributes": {
+        "id": "pippo-1"
+      }
+    }
+  },
+  "relationshipsParentCrossedNamespaceObject": {
+    "data": {
+      "type": "articles",
+      "id": "1",
+      "relationships": {
+        "type": {
+          "id": "1",
+          "type": "author",
+          "name": "pippo",
+          "gender": "male"
+        }
+      }
+    }
   }
 }

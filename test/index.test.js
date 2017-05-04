@@ -197,6 +197,20 @@ describe('"Resource objects" appear in a JSON API document to represent resource
         expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
       })
 
+      it('nor can it have an attribute named "type" or "id".', () => {
+        // Setup
+        const document = testData.attributesParentCrossedNamespaceObject
+        // Expectations
+        expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
+      })
+
+      it('nor can it have a relationship named "type" or "id".', () => {
+        // Setup
+        const document = testData.relationshipsParentCrossedNamespaceObject
+        // Expectations
+        expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
+      })
+
       describe('Attributes:', () => {
         describe('The value of the attributes key MUST be an object (an "attributes object").', () => {
           it('should raise error on undefined', () => {
