@@ -13,7 +13,8 @@ import {
   isNil,
   isNull,
   isUndefined,
-  isObject
+  isObject,
+  has
 } from 'lodash'
 import invariant from 'fbjs/lib/invariant'
 
@@ -233,15 +234,17 @@ function fieldsCommonNamespace (obj) {
   if (!obj) {
     return
   }
-  let {attributes, relationships} = obj
-  if (relationships) {
-    invariant(
-      !relationships.hasOwnProperty('id') && !relationships.hasOwnProperty('type') && !attributes.hasOwnProperty('id') && !attributes.hasOwnProperty('type'),
-      `Malformed jsonapi model.\n
-       A resource can not have an "attribute" or "relationship" named type or id.\n
-       Visit: http://jsonapi.org/format/#document-resource-object-fields`
-    )
 
+  const {attributes, relationships} = obj
+
+  invariant(
+    !has(relationships, 'id') && !has(relationships, 'type') && !has(attributes, 'id') && !has(attributes, 'type'),
+    `Malformed jsonapi model.\n
+     A resource can not have an "attribute" or "relationship" named type or id.\n
+     Visit: http://jsonapi.org/format/#document-resource-object-fields`
+  )
+
+  if (relationships) {
     for (let key in attributes) {
       invariant(
         !relationships.hasOwnProperty(key),
