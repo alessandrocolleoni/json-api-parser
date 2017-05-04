@@ -43,19 +43,21 @@ function deserialize (jsonApiModel) {
 
   if (!Array.isArray(jsonApiModel.data)) {
     invariant(
-      !(!isResourceIdentifier(jsonApiModel.data) || isNull(jsonApiModel.data)),
+      isResourceIdentifier(jsonApiModel.data) || isNull(jsonApiModel.data),
       `Malformed jsonapi model.\n
      Primary data MUST be either: a single resource object, a single resource identifier object, or null, for requests that target single resources.\n
      Visit: http://jsonapi.org/format/#document-top-level`
     )
+    idAndTypesAreString(jsonApiModel.data)
   } else {
-    for (let obj in jsonApiModel.data) {
+    for (let obj of jsonApiModel.data) {
       invariant(
-        obj && !isResourceIdentifier(obj),
+        obj && isResourceIdentifier(obj),
         `Malformed jsonapi model.\n
         Primary data MUST be either: an array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.\n
         Visit: http://jsonapi.org/format/#document-top-level`
       )
+      idAndTypesAreString(obj)
     }
   }
 
@@ -205,6 +207,17 @@ function isResourceIdentifier (obj) {
       'id': id => !isNil(id),
       'type': type => !isNil(type)
     })
+}
+
+function idAndTypesAreString (obj) {
+  if (obj) {
+    invariant(
+      typeof obj.id === 'string' && typeof obj.type === 'string',
+      `Malformed jsonapi model.\n
+     Every resource object MUST contain an id member and a type member. The values of the id and type members MUST be strings.\n
+     Visit: http://jsonapi.org/format/#document-resource-object-identification`
+    )
+  }
 }
 
 export { serialize, deserialize }
