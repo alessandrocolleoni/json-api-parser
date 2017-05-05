@@ -223,8 +223,8 @@ describe('"Resource objects" appear in a JSON API document to represent resource
               'attributes': undefined
             }
           }
-            // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          // Expectations
+          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object/)
         })
 
         it('should raise error on null', () => {
@@ -237,7 +237,7 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object/)
         })
 
         it('should raise error on number', () => {
@@ -246,11 +246,11 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             'data': {
               'id': '1',
               'type': 'test',
-              'attributes': undefined
+              'attributes': 2
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object/)
         })
 
         it('should raise error on string', () => {
@@ -259,11 +259,11 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             'data': {
               'id': '1',
               'type': 'test',
-              'attributes': undefined
+              'attributes': 'string'
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object (an "attributes object")/)
+          expect(() => deserialize(document)).to.throw(/The value of the attributes key MUST be an object/)
         })
       })
 

@@ -69,14 +69,22 @@ function deserialize (jsonApiModel) {
 
   // TODO: refactor with errors
   if (data) {
+
+    invariant(
+      !has(data, 'attributes') || isObject(data.attributes),
+      `Malformed jsonapi model.\n
+       The value of the attributes key MUST be an object.\n
+       Visit: http://jsonapi.org/format/#document-resource-object-attributes`
+    )
+
     let jsonModel = {...data.attributes, id: data.id, type: data.type}
 
-    if (data.relationships) {
+    if (has(data, 'relationships')) {
       // TODO: Relationships checks
       jsonModel.relationships = {...data.relationships}
     }
 
-    if (data.meta) {
+    if (has(data, 'meta')) {
       jsonApiModel.meta = {...data.meta}
     }
 
