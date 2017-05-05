@@ -284,7 +284,7 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          expect(() => deserialize(document)).to.throw(/Any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
         })
 
         it('a "links" member', () => {
@@ -303,7 +303,7 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          expect(() => deserialize(document)).to.throw(/Any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
         })
       })
 
@@ -326,7 +326,7 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          expect(() => deserialize(document)).to.throw(/Any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
         })
 
         it('a "links" member', () => {
@@ -347,7 +347,7 @@ describe('"Resource objects" appear in a JSON API document to represent resource
             }
           }
             // Expectations
-          expect(() => deserialize(document)).to.throw(/any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
+          expect(() => deserialize(document)).to.throw(/Any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member/)
         })
       })
     })

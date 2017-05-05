@@ -14,7 +14,8 @@ import {
   isNull,
   isUndefined,
   isObject,
-  has
+  has,
+  get
 } from 'lodash'
 import invariant from 'fbjs/lib/invariant'
 
@@ -69,7 +70,6 @@ function deserialize (jsonApiModel) {
 
   // TODO: refactor with errors
   if (data) {
-
     invariant(
       !has(data, 'attributes') || isObject(data.attributes),
       `Malformed jsonapi model.\n
@@ -77,7 +77,17 @@ function deserialize (jsonApiModel) {
        Visit: http://jsonapi.org/format/#document-resource-object-attributes`
     )
 
-    let jsonModel = {...data.attributes, id: data.id, type: data.type}
+    const {attributes} = data
+    let jsonModel = {...attributes, id: data.id, type: data.type}
+
+    invariant(
+      !has(attributes, 'relationships') && !has(attributes, 'links'),
+      `Malformed jsonapi model.\n
+      Any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member.\n
+      Visit: http://jsonapi.org/format/#document-resource-object-attributes`
+    )
+
+    checkNestedRelationshipsOrLinks(attributes)
 
     if (has(data, 'relationships')) {
       // TODO: Relationships checks
@@ -91,8 +101,8 @@ function deserialize (jsonApiModel) {
     invariant(
       isUndefined(jsonApiModel.included) || Array.isArray(jsonApiModel.included),
       `Malformed jsonapi model.\n
-    In a compound document, all included resources MUST be represented as an array of resource objects in a top-level included member.\n
-    Visit: http://jsonapi.org/format/#document-compound-documents`
+      In a compound document, all included resources MUST be represented as an array of resource objects in a top-level included member.\n
+      Visit: http://jsonapi.org/format/#document-compound-documents`
     )
 
     if (included && included.length > 0) {
@@ -260,6 +270,24 @@ function fieldsCommonNamespace (obj) {
          A resource can NOT have an "attribute" and "relationship" with the same name.\n
          Visit: http://jsonapi.org/format/#document-resource-object-fields`
       )
+    }
+  }
+}
+
+function checkNestedRelationshipsOrLinks (obj) {
+  if (!obj) {
+    return
+  }
+  for (let o in obj) {
+    let curr = get(obj, o)
+    if (isObject(curr)) {
+      invariant(
+        !has(curr, 'relationships') && !has(curr, 'links'),
+        `Malformed jsonapi model.\n
+        Any object that constitutes or is contained in an attribute MUST NOT contain a "relationships" or "links" member.\n
+        Visit: http://jsonapi.org/format/#document-resource-object-attributes`
+      )
+      checkNestedRelationshipsOrLinks(curr)
     }
   }
 }
