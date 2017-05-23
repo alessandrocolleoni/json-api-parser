@@ -1,4 +1,5 @@
 import { conformsTo, isNil, isNull } from 'lodash'
+import { isResourceIdentifier } from '../common'
 import invariant from 'fbjs/lib/invariant'
 
 function checkResourceIdentifierOrNull (data) {
@@ -17,14 +18,6 @@ function checkResourceArray (resource) {
         Primary data MUST be either: an array of resource objects, an array of resource identifier objects, or an empty array ([]), for requests that target resource collections.\n
         Visit: http://jsonapi.org/format/#document-top-level`
   )
-}
-
-function isResourceIdentifier (obj) {
-  return conformsTo(obj,
-    {
-      'id': id => !isNil(id),
-      'type': type => !isNil(type)
-    })
 }
 
 export { checkResourceIdentifierOrNull, checkResourceArray }

@@ -1,5 +1,7 @@
-import { isObject, has, conformsTo, isNil, isEmpty, forEach } from 'lodash'
+import { isObject, has, isNil, isEmpty, forEach } from 'lodash'
 import { linksMustBeObject, linksMustHaveAtLeast } from '../links'
+import { metaMustBeObject } from '../meta'
+import { isResourceIdentifier } from '../common'
 import invariant from 'fbjs/lib/invariant'
 
 function relationshipsMustBeObject (data) {
@@ -24,42 +26,39 @@ function relationshipMustContain (relationship) {
     linksMustBeObject(links)
     linksMustHaveAtLeast(links)
   }
+  if (has(relationship, 'meta')) {
+    const {meta} = relationship
+    metaMustBeObject(meta)
+  }
 }
 
 function isResourceLinkage (resourceLinkage) {
-  if (Array.isArray(resourceLinkage)) {
+  const {data} = resourceLinkage
+  if (Array.isArray(data)) {
     invariant(
-      isEmpty(resourceLinkage),
+      Array.isArray(data) || isEmpty(data),
       `Malformed jsonapi model.\n
       Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
       http://jsonapi.org/format/#document-resource-object-linkage
       `
     )
-    forEach(resourceLinkage, current =>
+    forEach(data, resource =>
       invariant(
-        isResourceIdentifier(current),
+        isResourceIdentifier(resource),
         `Malformed jsonapi model.\n
-        Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
-        http://jsonapi.org/format/#document-resource-object-linkage
-      `
+          Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
+          http://jsonapi.org/format/#document-resource-object-linkage
+          `
       )
     )
   } else {
     invariant(
-      isNil(resourceLinkage) || isResourceIdentifier(resourceLinkage),
+      isNil(data) || isResourceIdentifier(data),
       `Malformed jsonapi model.\n
       Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
       http://jsonapi.org/format/#document-resource-object-linkage
       `)
   }
-}
-
-function isResourceIdentifier (obj) {
-  return conformsTo(obj,
-    {
-      'id': id => !isNil(id),
-      'type': type => !isNil(type)
-    })
 }
 
 export { relationshipsMustBeObject, relationshipMustContain, isResourceLinkage }
