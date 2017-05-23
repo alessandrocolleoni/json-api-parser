@@ -6,4 +6,4 @@ export { checkCommonNamespace } from './fieldsChecks'
 
 export { attributesMustBeObject, checkNestedRelationshipsOrLinks } from './attributesChecks'
 
-export { relationshipsMustBeObject, relationshipMustContain} from './relationshipsChecks'
+export { relationshipsMustBeObject, relationshipMustContain, isResourceLinkage } from './relationshipsChecks'

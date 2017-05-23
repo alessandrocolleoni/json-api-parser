@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import {deserialize} from '../../src/index'
-import { relationshipsMustBeObject, relationshipMustContain } from '../../src/resourceObject'
+import { relationshipsMustBeObject, relationshipMustContain, isResourceLinkage } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
 describe('"Resource objects" - Relationships:', () => {
@@ -41,11 +41,25 @@ describe('"Resource objects" - Relationships:', () => {
         // Setup
         const document = testData.relationshipEmptyLinksObject
         // Expectations
-        expect(() => deserialize(document)).to.throw(/a "links object" containing at least one of the following: self, data or meta/)
+        expect(() => relationshipMustContain(document.data.relationships)).to.throw(/A "links object" MUST contain at least one of the following: self or related/)
       })
     })
 
     describe('data: a "resource linkage" object', () => {
+      it('should raise error on string', () => {
+        // Setup
+        const document = testData.relationshipDataStringObject
+        // Expectations
+        expect(() => { isResourceLinkage(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
+      })
+
+      it('should raise error on number', () => {
+        // Setup
+        const document = testData.relationshipDataNumberObject
+        // Expectations
+        expect(() => { isResourceLinkage(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
+      })
+
       describe('Resource linkage MUST be represented as one of the following:', () => {
         it('- null for empty to-one relationships', () => {
           // Setup
@@ -74,20 +88,6 @@ describe('"Resource objects" - Relationships:', () => {
           // Expectations
           expect(() => { deserialize(document) }).not.to.throw(Error)
         })
-      })
-
-      it('should raise error on string', () => {
-        // Setup
-        const document = testData.relationshipDataStringObject
-        // Expectations
-        expect(() => { deserialize(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
-      })
-
-      it('should raise error on number', () => {
-        // Setup
-        const document = testData.relationshipDataNumberObject
-        // Expectations
-        expect(() => { deserialize(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
       })
     })
 

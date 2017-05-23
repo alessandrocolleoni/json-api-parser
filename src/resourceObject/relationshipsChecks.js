@@ -1,4 +1,5 @@
-import { isObject, has } from 'lodash'
+import { isObject, has, conformsTo, isNil, isEmpty, forEach } from 'lodash'
+import { linksMustBeObject, linksMustHaveAtLeast } from '../links'
 import invariant from 'fbjs/lib/invariant'
 
 function relationshipsMustBeObject (data) {
@@ -17,6 +18,48 @@ function relationshipMustContain (relationship) {
      A "relationship object" MUST contain at least one of the following: links, data or meta.\n
      Visit: http://jsonapi.org/format/#document-resource-object-relationships`
   )
+
+  if (has(relationship, 'links')) {
+    const {links} = relationship
+    linksMustBeObject(links)
+    linksMustHaveAtLeast(links)
+  }
 }
 
-export { relationshipsMustBeObject, relationshipMustContain }
+function isResourceLinkage (resourceLinkage) {
+  if (Array.isArray(resourceLinkage)) {
+    invariant(
+      isEmpty(resourceLinkage),
+      `Malformed jsonapi model.\n
+      Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
+      http://jsonapi.org/format/#document-resource-object-linkage
+      `
+    )
+    forEach(resourceLinkage, current =>
+      invariant(
+        isResourceIdentifier(current),
+        `Malformed jsonapi model.\n
+        Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
+        http://jsonapi.org/format/#document-resource-object-linkage
+      `
+      )
+    )
+  } else {
+    invariant(
+      isNil(resourceLinkage) || isResourceIdentifier(resourceLinkage),
+      `Malformed jsonapi model.\n
+      Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects\n
+      http://jsonapi.org/format/#document-resource-object-linkage
+      `)
+  }
+}
+
+function isResourceIdentifier (obj) {
+  return conformsTo(obj,
+    {
+      'id': id => !isNil(id),
+      'type': type => !isNil(type)
+    })
+}
+
+export { relationshipsMustBeObject, relationshipMustContain, isResourceLinkage }
