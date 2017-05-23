@@ -12,46 +12,6 @@ import { serialize, deserialize } from '../src/index'
 import testData from './test-data.json'
 
 describe('"Resource objects" appear in a JSON API document to represent resources.', () => {
-  it('A resource object MUST contain at least the following top-level members: id and type', () => {
-    // Setup
-    const document = {
-      'data': testData.invalidResourceObject
-    }
-    // Expectations
-    expect(() => { deserialize(document) }).to.throw(Error)
-  })
-
-  describe('Identification:', () => {
-    describe('The values of the id and type members MUST be strings.', () => {
-      it('should raise error when both "id" and "type" are NOT string', () => {
-        // Setup
-        const document = {
-          'data': testData.invalidIdTypeResourceObject
-        }
-        // Expectations
-        expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
-      })
-
-      it('should raise error when "id" is NOT string', () => {
-        // Setup
-        const document = {
-          'data': testData.invalidIdResourceObject
-        }
-        // Expectations
-        expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
-      })
-
-      it('should raise error when "type" member is NOT string', () => {
-        // Setup
-        const document = {
-          'data': testData.invalidTypeResourceObject
-        }
-        // Expectations
-        expect(() => { deserialize(document) }).to.throw(/The values of the id and type members MUST be strings./)
-      })
-    })
-  })
-
   describe('Fields:', () => {
     describe('Fields for a resource object MUST share a common namespace with each other and with type and id.', () => {
       it('a resource can NOT have an "attribute" and "relationship" with the same name', () => {
