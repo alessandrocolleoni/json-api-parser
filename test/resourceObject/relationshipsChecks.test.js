@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import {deserialize} from '../../src/index'
-import { relationshipsMustBeObject } from '../../src/resourceObject'
+import { relationshipsMustBeObject, relationshipMustContain } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
 describe('"Resource objects" - Relationships:', () => {
@@ -33,10 +33,10 @@ describe('"Resource objects" - Relationships:', () => {
       // Setup
       const document = testData.relationshipEmptyObject
       // Expectations
-      expect(() => deserialize(document)).to.throw(/A "relationship object" MUST contain at least one of the following: links, data or meta/)
+      expect(() => relationshipMustContain(document.data.relationships)).to.throw(/A "relationship object" MUST contain at least one of the following: links, data or meta/)
     })
 
-    describe('links: a "links object" containing at least one of the following: self, data or meta', () => {
+    describe('links: a "links object" containing at least one of the following: self or related', () => {
       it('should raise error on empty links object', () => {
         // Setup
         const document = testData.relationshipEmptyLinksObject
