@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import { checkIdAndType } from '../../src/constraintsChecks'
 import testData from '../test-data.json'
 
-describe('Identification:', () => {
+describe('"Resource objects" - Identification:', () => {
   it('A resource object MUST contain at least the following top-level members: id and type', () => {
     // Setup
     const document = {
