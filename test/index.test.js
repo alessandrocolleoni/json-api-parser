@@ -12,146 +12,114 @@ import { serialize, deserialize } from '../src/index'
 import testData from './test-data.json'
 
 describe('"Resource objects" appear in a JSON API document to represent resources.', () => {
-  describe('Fields:', () => {
-    describe('Fields for a resource object MUST share a common namespace with each other and with type and id.', () => {
-      it('a resource can NOT have an "attribute" and "relationship" with the same name', () => {
+  describe('Relationships:', () => {
+    describe('The value of the relationships key MUST be an object (a "relationships object").', () => {
+      it('should raise error on null', () => {
         // Setup
-        const document = testData.attributesRelationshipsCrossedNamespaceObject
+        const document = testData.relationshipNullObject
         // Expectations
-        expect(() => deserialize(document)).to.throw(/A resource can NOT have an "attribute" and "relationship" with the same name/)
+        expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
       })
 
-      it('nor can it have an attribute or relationship named "type" or "id".', () => {
+      it('should raise error on string', () => {
         // Setup
-        const document = testData.attributesRelationshipsParentCrossedNamespaceObject
+        const document = testData.relationshipStringObject
         // Expectations
-        expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
+        expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
       })
 
-      it('nor can it have an attribute named "type" or "id".', () => {
+      it('should raise error on number', () => {
         // Setup
-        const document = testData.attributesParentCrossedNamespaceObject
+        const document = testData.relationshipNumberObject
         // Expectations
-        expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
-      })
-
-      it('nor can it have a relationship named "type" or "id".', () => {
-        // Setup
-        const document = testData.relationshipsParentCrossedNamespaceObject
-        // Expectations
-        expect(() => deserialize(document)).to.throw(/A resource can not have an "attribute" or "relationship" named type or id/)
+        expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
       })
     })
 
-    describe('Relationships:', () => {
-      describe('The value of the relationships key MUST be an object (a "relationships object").', () => {
-        it('should raise error on null', () => {
-            // Setup
-          const document = testData.relationshipNullObject
-            // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
-        })
+    describe('A "relationship object" MUST contain at least one of the following: links, data or meta', () => {
+      it('should raise error on empty relationships object', () => {
+        // Setup
+        const document = testData.relationshipEmptyObject
+        // Expectations
+        expect(() => deserialize(document)).to.throw(/A "relationship object" MUST contain at least one of the following: links, data or meta/)
+      })
 
-        it('should raise error on string', () => {
-            // Setup
-          const document = testData.relationshipStringObject
-            // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
-        })
-
-        it('should raise error on number', () => {
-            // Setup
-          const document = testData.relationshipNumberObject
-            // Expectations
-          expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
+      describe('links: a "links object" containing at least one of the following: self, data or meta', () => {
+        it('should raise error on empty links object', () => {
+          // Setup
+          const document = testData.relationshipEmptyLinksObject
+          // Expectations
+          expect(() => deserialize(document)).to.throw(/a "links object" containing at least one of the following: self, data or meta/)
         })
       })
 
-      describe('A "relationship object" MUST contain at least one of the following: links, data or meta', () => {
-        it('should raise error on empty relationships object', () => {
+      describe('data: a "resource linkage" object', () => {
+        describe('Resource linkage MUST be represented as one of the following:', () => {
+          it('- null for empty to-one relationships', () => {
             // Setup
-          const document = testData.relationshipEmptyObject
+            const document = testData.relationshipDataNullObject
             // Expectations
-          expect(() => deserialize(document)).to.throw(/A "relationship object" MUST contain at least one of the following: links, data or meta/)
-        })
+            expect(() => { deserialize(document) }).not.to.throw(Error)
+          })
 
-        describe('links: a "links object" containing at least one of the following: self, data or meta', () => {
-          it('should raise error on empty links object', () => {
+          it('- an empty array ([]) for empty to-many relationships.', () => {
             // Setup
-            const document = testData.relationshipEmptyLinksObject
+            const document = testData.relationshipDataEmptyArrayObject
             // Expectations
-            expect(() => deserialize(document)).to.throw(/a "links object" containing at least one of the following: self, data or meta/)
+            expect(() => { deserialize(document) }).not.to.throw(Error)
+          })
+
+          it('- a single resource identifier object for non-empty to-one relationships.', () => {
+            // Setup
+            const document = testData.relationshipDataOneObject
+            // Expectations
+            expect(() => { deserialize(document) }).not.to.throw(Error)
+          })
+
+          it('- an array of resource identifier objects for non-empty to-many relationships.', () => {
+            // Setup
+            const document = testData.relationshipDataManyObject
+            // Expectations
+            expect(() => { deserialize(document) }).not.to.throw(Error)
           })
         })
 
-        describe('data: a "resource linkage" object', () => {
-          describe('Resource linkage MUST be represented as one of the following:', () => {
-            it('- null for empty to-one relationships', () => {
-                // Setup
-              const document = testData.relationshipDataNullObject
-                // Expectations
-              expect(() => { deserialize(document) }).not.to.throw(Error)
-            })
+        it('should raise error on string', () => {
+          // Setup
+          const document = testData.relationshipDataStringObject
+          // Expectations
+          expect(() => { deserialize(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
+        })
 
-            it('- an empty array ([]) for empty to-many relationships.', () => {
-              // Setup
-              const document = testData.relationshipDataEmptyArrayObject
-              // Expectations
-              expect(() => { deserialize(document) }).not.to.throw(Error)
-            })
+        it('should raise error on number', () => {
+          // Setup
+          const document = testData.relationshipDataNumberObject
+          // Expectations
+          expect(() => { deserialize(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
+        })
+      })
 
-            it('- a single resource identifier object for non-empty to-one relationships.', () => {
-              // Setup
-              const document = testData.relationshipDataOneObject
-              // Expectations
-              expect(() => { deserialize(document) }).not.to.throw(Error)
-            })
-
-            it('- an array of resource identifier objects for non-empty to-many relationships.', () => {
-              // Setup
-              const document = testData.relationshipDataManyObject
-              // Expectations
-              expect(() => { deserialize(document) }).not.to.throw(Error)
-            })
+      describe('meta: a "meta" object that contains non-standard meta-information about the relationship.', () => {
+        describe('The value of each meta member MUST be an object (a "meta object").', () => {
+          it('should raise error on null', () => {
+            // Setup
+            const document = testData.relationshipMetaNullObject
+            // Expectations
+            expect(() => { deserialize(document) }).to.throw(/The value of each meta member MUST be an object (a "meta object")/)
           })
 
           it('should raise error on string', () => {
-              // Setup
-            const document = testData.relationshipDataStringObject
-              // Expectations
-            expect(() => { deserialize(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
+            // Setup
+            const document = testData.relationshipMetaStringObject
+            // Expectations
+            expect(() => { deserialize(document) }).to.throw(/The value of each meta member MUST be an object (a "meta object")/)
           })
 
           it('should raise error on number', () => {
-              // Setup
-            const document = testData.relationshipDataNumberObject
-              // Expectations
-            expect(() => { deserialize(document) }).to.throw(/Resource linkage MUST be represented as one of the following: null, an empty array, a resource identifier object or an array of resource identifier objects/)
-          })
-        })
-
-        describe('meta: a "meta" object that contains non-standard meta-information about the relationship.', () => {
-          describe('The value of each meta member MUST be an object (a "meta object").', () => {
-            it('should raise error on null', () => {
-              // Setup
-              const document = testData.relationshipMetaNullObject
-              // Expectations
-              expect(() => { deserialize(document) }).to.throw(/The value of each meta member MUST be an object (a "meta object")/)
-            })
-
-            it('should raise error on string', () => {
-              // Setup
-              const document = testData.relationshipMetaStringObject
-              // Expectations
-              expect(() => { deserialize(document) }).to.throw(/The value of each meta member MUST be an object (a "meta object")/)
-            })
-
-            it('should raise error on number', () => {
-              // Setup
-              const document = testData.relationshipMetaNumberObject
-              // Expectations
-              expect(() => { deserialize(document) }).to.throw(/The value of each meta member MUST be an object (a "meta object")/)
-            })
+            // Setup
+            const document = testData.relationshipMetaNumberObject
+            // Expectations
+            expect(() => { deserialize(document) }).to.throw(/The value of each meta member MUST be an object (a "meta object")/)
           })
         })
       })
