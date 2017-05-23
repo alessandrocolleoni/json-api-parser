@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
-import { checkIdAndType } from '../../src/constraintsChecks'
+import { checkIdAndType } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
 describe('"Resource objects" - Identification:', () => {

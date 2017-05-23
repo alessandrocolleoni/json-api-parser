@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
-import { attributesMustBeObject, checkNestedRelationshipsOrLinks } from '../../src/constraintsChecks'
+import { attributesMustBeObject, checkNestedRelationshipsOrLinks } from '../../src/resourceObject'
 
 describe('"Resource objects" - Attributes:', () => {
   describe('The value of the attributes key MUST be an object (an "attributes object").', () => {

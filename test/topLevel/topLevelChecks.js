@@ -6,7 +6,7 @@ import {
   checkContainsAtLeast,
   checkDataAndErrosNotCoexist,
   checkIncludedNotPresent
-} from '../../src/constraintsChecks'
+} from '../../src/resourceObject/index'
 
 describe('Top Level:', () => {
   describe('A JSON object MUST be at the root of every JSON API request and response containing data. This object defines a document’s “top level”.', () => {

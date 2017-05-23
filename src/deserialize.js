@@ -1,17 +1,21 @@
 import { clone, isUndefined, has } from 'lodash'
 import invariant from 'fbjs/lib/invariant'
+
 import {
   checkIsObject,
   checkContainsAtLeast,
   checkDataAndErrosNotCoexist,
-  checkIncludedNotPresent,
+  checkIncludedNotPresent
+} from './topLevel'
+
+import {
   checkResourceIdentifierOrNull,
   checkResourceArray,
   checkIdAndType,
   checkCommonNamespace,
   attributesMustBeObject,
   checkNestedRelationshipsOrLinks
-} from './constraintsChecks'
+} from './resourceObject'
 
 function deserialize (jsonApiModel) {
   checkIsObject(jsonApiModel)

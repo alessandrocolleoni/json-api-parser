@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
-import { checkCommonNamespace } from '../../src/constraintsChecks'
+import { checkCommonNamespace } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
 describe('"Resource objects" - Fields:', () => {

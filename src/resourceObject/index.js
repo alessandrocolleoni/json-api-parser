@@ -1,10 +1,3 @@
-export {
-  checkIsObject,
-  checkContainsAtLeast,
-  checkDataAndErrosNotCoexist,
-  checkIncludedNotPresent
-} from './topLevelChecks'
-
 export { checkResourceIdentifierOrNull, checkResourceArray } from './primaryDataChecks'
 
 export { checkIdAndType } from './identificationChecks'

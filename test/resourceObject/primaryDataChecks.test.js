@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
-import { checkResourceIdentifierOrNull, checkResourceArray } from '../../src/constraintsChecks'
+import { checkResourceIdentifierOrNull, checkResourceArray } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
 describe('The document’s "primary data" is a representation of the resource or collection of resources targeted by a request.', () => {
