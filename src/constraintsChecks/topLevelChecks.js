@@ -20,7 +20,7 @@ function checkIsObject (jsonApiModel) {
  * @param errors
  * @param meta
  */
-function checkContainsAtLeast (data, errors, meta) {
+function checkContainsAtLeast ({data, errors, meta}) {
   invariant(
     !(isUndefined(data) && isUndefined(errors) && isUndefined(meta)),
     `Malformed jsonapi model.A document MUST contain at least one of the following top-level members: data, errors or meta\nVisit: http://jsonapi.org/format/#document-top-level`
@@ -32,14 +32,14 @@ function checkContainsAtLeast (data, errors, meta) {
  * @param data
  * @param errors
  */
-function checkDataAndErrosNotCoexist (data, errors) {
+function checkDataAndErrosNotCoexist ({data, errors}) {
   invariant(
     (!isUndefined(data) && isUndefined(errors)) || (isUndefined(data) && !isUndefined(errors)),
     `Malformed jsonapi model. The members data and errors MUST NOT coexist in the same document.\nVisit: http://jsonapi.org/format/#document-top-level`
   )
 }
 
-function checkIncludedNotPresent (data, included) {
+function checkIncludedNotPresent ({data, included}) {
   invariant(
     !(isUndefined(data) && included),
     `Malformed jsonapi model.\n

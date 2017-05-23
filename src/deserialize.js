@@ -18,9 +18,9 @@ function deserialize (jsonApiModel) {
 
   const {data, errors, meta, included} = jsonApiModel
 
-  checkContainsAtLeast(data, errors, meta)
-  checkDataAndErrosNotCoexist(data, errors)
-  checkIncludedNotPresent(data, included)
+  checkContainsAtLeast({data, errors, meta})
+  checkDataAndErrosNotCoexist({data, errors})
+  checkIncludedNotPresent({data, included})
 
   if (!Array.isArray(data)) {
     checkResourceIdentifierOrNull(data)
