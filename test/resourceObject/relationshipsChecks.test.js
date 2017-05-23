@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import {deserialize} from '../../src/index'
+import { relationshipsMustBeObject } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
 describe('"Resource objects" - Relationships:', () => {
@@ -9,21 +10,21 @@ describe('"Resource objects" - Relationships:', () => {
       // Setup
       const document = testData.relationshipNullObject
       // Expectations
-      expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
+      expect(() => relationshipsMustBeObject(document.data)).to.throw(/The value of the relationships key MUST be an object/)
     })
 
     it('should raise error on string', () => {
       // Setup
       const document = testData.relationshipStringObject
       // Expectations
-      expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
+      expect(() => relationshipsMustBeObject(document.data)).to.throw(/The value of the relationships key MUST be an object/)
     })
 
     it('should raise error on number', () => {
       // Setup
       const document = testData.relationshipNumberObject
       // Expectations
-      expect(() => deserialize(document)).to.throw(/The value of the relationships key MUST be an object (a "relationships object")/)
+      expect(() => relationshipsMustBeObject(document.data)).to.throw(/The value of the relationships key MUST be an object/)
     })
   })
 
