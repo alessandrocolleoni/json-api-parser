@@ -10,8 +10,7 @@
 import { expect } from 'chai'
 import { serialize, deserialize } from '../src/index'
 
-// TODO: parsing
-describe('Parse attributes', () => {
+describe('Deserialize json Api to json', () => {
   const toDeserialize = {
     'data': {
       'id': '80ab0682-e7d1-4800-b12a-efca9e2f15c0',

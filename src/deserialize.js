@@ -14,13 +14,25 @@ import {
   checkIdAndType,
   checkCommonNamespace,
   attributesMustBeObject,
-  checkNestedRelationshipsOrLinks
+  checkNestedRelationshipsOrLinks,
+  relationshipsMustBeObject,
+  relationshipMustContain,
+  isResourceLinkage
 } from './resourceObject'
+
+import {
+  linksMustBeObject,
+  linksMustHaveAtLeast
+} from './links'
+
+import {
+  metaMustBeObject
+} from './meta'
 
 function deserialize (jsonApiModel) {
   checkIsObject(jsonApiModel)
 
-  const {data, errors, meta, included} = jsonApiModel
+  const {data, errors, meta, included, links} = jsonApiModel
 
   checkContainsAtLeast({data, errors, meta})
   checkDataAndErrosNotCoexist({data, errors})
@@ -48,12 +60,24 @@ function deserialize (jsonApiModel) {
     checkNestedRelationshipsOrLinks(attributes)
 
     if (has(data, 'relationships')) {
+      relationshipsMustBeObject(data)
+      const {relationships} = data
+      relationshipMustContain(relationships)
+      isResourceLinkage(relationships)
       // TODO: Relationships checks
-      jsonModel.relationships = {...data.relationships}
+      jsonModel.relationships = {...relationships}
     }
 
     if (has(data, 'meta')) {
-      jsonApiModel.meta = {...data.meta}
+      const {meta} = data
+      metaMustBeObject(meta)
+      jsonApiModel.meta = {...meta}
+    }
+
+    if (links) {
+      linksMustBeObject(links)
+      linksMustHaveAtLeast(links)
+      jsonApiModel.links = {...links}
     }
 
     invariant(
@@ -64,10 +88,9 @@ function deserialize (jsonApiModel) {
     )
 
     if (included && included.length > 0) {
-      // TODO: inclusion checks
       const incl = [].concat(jsonApiModel.included)
-      jsonModel.included = {}
       let mapRelationships = new Map()
+      jsonModel.included = {}
       jsonModel.included = populateInclude(jsonModel, data, incl, mapRelationships)
     }
     return jsonModel
@@ -113,7 +136,11 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
           if (itemIncludedJson.relationships && !mapRelationships.has(actualRelationship.id)) {
             mapRelationships.set(actualRelationship.id, null)
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            itemConverted.relationships = clone(itemIncludedJson.relationships)
+            relationshipsMustBeObject(itemIncludedJson)
+            const {relationships} = itemIncludedJson
+            relationshipMustContain(relationships)
+            isResourceLinkage(relationships)
+            itemConverted.relationships = clone(relationships)
             mapRelationships.set(actualRelationship.id, itemConverted)
           } else if (itemIncludedJson.relationships && mapRelationships.get(actualRelationship.id)) {
             itemConverted = mapRelationships[actualRelationship.id].data
@@ -138,8 +165,11 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
           if (itemIncludedJson.relationships && !mapRelationships.has(relationshipData.id)) {
             mapRelationships.set(relationshipData.id, null)
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            itemConverted.relationships = clone(itemIncludedJson.relationships)
-            mapRelationships.set(relationshipData.id, itemConverted)
+            relationshipsMustBeObject(itemIncludedJson)
+            const {relationships} = itemIncludedJson
+            relationshipMustContain(relationships)
+            isResourceLinkage(relationships)
+            itemConverted.relationships = clone(relationships)
             mapRelationships.set(relationshipData.id, itemConverted)
           } else if (itemIncludedJson.relationships && mapRelationships.get(relationshipData.id)) {
             mapRelationships = mapRelationships[relationshipData.id].data
