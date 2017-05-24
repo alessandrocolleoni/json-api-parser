@@ -9,6 +9,7 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import { serialize, deserialize } from '../src/index'
+import complexJson from './test-data-complex-deserialize.json'
 
 describe('Deserialize json Api to json', () => {
   const toDeserialize = {
@@ -29,6 +30,11 @@ describe('Deserialize json Api to json', () => {
     expect(deserialized.id).to.equal('80ab0682-e7d1-4800-b12a-efca9e2f15c0')
     expect(deserialized.type).to.equal('apps')
     expect(Object.keys(deserialized).length).to.equal(5)
+  })
+
+  it('should deserialize with included', () => {
+    let toDeserialize = complexJson
+    deserialize(toDeserialize)
   })
 })
 

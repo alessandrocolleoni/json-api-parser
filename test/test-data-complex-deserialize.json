@@ -1,0 +1,439 @@
+{
+  "data": {
+    "id": "ea49f080-29f3-41f1-8db2-7ed3ea9d1e09",
+    "type": "locations",
+    "attributes": {
+      "name": "name",
+      "description": "description",
+      "address": "address",
+      "something": [
+        {
+          "title": "title",
+          "text": "text"
+        },
+        {
+          "title": "title2",
+          "text": "text2"
+        }
+      ]
+    },
+    "relationships": {
+      "events": {
+        "data": [
+          {
+            "id": "9674661f-2725-4b0e-b39e-f36052902350",
+            "type": "events"
+          },
+          {
+            "id": "e5587cfc-230b-44e0-8d0d-d698919b045d",
+            "type": "events"
+          }
+        ]
+      },
+      "areas": {
+        "data": [
+          {
+            "id": "da465173-2a99-4cdf-b43f-4164b14ad5a7",
+            "type": "areas"
+          },
+          {
+            "id": "594bf80d-d05c-42db-9e92-b57c2705d9eb",
+            "type": "areas"
+          },
+          {
+            "id": "b83cbc23-4480-41f8-8b46-4d1a8f54d315",
+            "type": "areas"
+          },
+          {
+            "id": "023f9709-a5bb-4e9b-9bd4-83503bc7e499",
+            "type": "areas"
+          },
+          {
+            "id": "f45adb2e-e970-4ad4-96ab-0a949cc84294",
+            "type": "areas"
+          },
+          {
+            "id": "cc8c8a5c-d93b-46c0-9f5f-87dab463e1b2",
+            "type": "areas"
+          },
+          {
+            "id": "f3223b18-5da3-477f-9057-fa200e41f453",
+            "type": "areas"
+          },
+          {
+            "id": "c586c7e8-cfd3-4f78-95c7-311035b1fad5",
+            "type": "areas"
+          }
+        ]
+      },
+      "maps": {
+        "data": [
+          {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          },
+          {
+            "id": "58ca8831-c6a0-4fac-9ad4-0d00e0b8f92b",
+            "type": "maps"
+          }
+        ]
+      }
+    },
+    "meta": {
+      "some_meta": false
+    }
+  },
+  "included": [
+    {
+      "id": "da465173-2a99-4cdf-b43f-4164b14ad5a7",
+      "type": "areas",
+      "attributes": {
+        "name": "area1",
+        "coordinates": {
+          "x": 240.0625,
+          "y": 560
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": [
+            {
+              "id": "4f218ac6-6ef4-43f8-a05a-1bc124f37043",
+              "type": "event_sessions"
+            }
+          ]
+        },
+        "map": {
+          "data": {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "4f218ac6-6ef4-43f8-a05a-1bc124f37043",
+      "type": "event_sessions",
+      "attributes": {
+        "title": "session1",
+        "description": "session1"
+      },
+      "relationships": {
+        "event": {
+          "data": {
+            "id": "e5587cfc-230b-44e0-8d0d-d698919b045d",
+            "type": "events"
+          }
+        },
+        "speakers": {
+          "data": []
+        },
+        "area": {
+          "data": {
+            "id": "da465173-2a99-4cdf-b43f-4164b14ad5a7",
+            "type": "areas"
+          }
+        }
+      }
+    },
+    {
+      "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+      "type": "maps",
+      "attributes": {
+        "name": "map1",
+        "map": {
+          "url": "url.jpeg"
+        }
+      },
+      "relationships": {
+        "areas": {
+          "data": [
+            {
+              "id": "da465173-2a99-4cdf-b43f-4164b14ad5a7",
+              "type": "areas"
+            },
+            {
+              "id": "594bf80d-d05c-42db-9e92-b57c2705d9eb",
+              "type": "areas"
+            },
+            {
+              "id": "b83cbc23-4480-41f8-8b46-4d1a8f54d315",
+              "type": "areas"
+            },
+            {
+              "id": "023f9709-a5bb-4e9b-9bd4-83503bc7e499",
+              "type": "areas"
+            },
+            {
+              "id": "f45adb2e-e970-4ad4-96ab-0a949cc84294",
+              "type": "areas"
+            },
+            {
+              "id": "cc8c8a5c-d93b-46c0-9f5f-87dab463e1b2",
+              "type": "areas"
+            }
+          ]
+        }
+      },
+      "meta": {
+        "map_processing": true
+      }
+    },
+    {
+      "id": "594bf80d-d05c-42db-9e92-b57c2705d9eb",
+      "type": "areas",
+      "attributes": {
+        "name": "area2",
+        "coordinates": {
+          "x": -175.9375,
+          "y": 592
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": []
+        },
+        "map": {
+          "data": {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "b83cbc23-4480-41f8-8b46-4d1a8f54d315",
+      "type": "areas",
+      "attributes": {
+        "name": "area3",
+        "coordinates": {
+          "x": 172.0625,
+          "y": 316
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": [
+            {
+              "id": "2dcbe4b2-a7f3-41ff-b08c-a201e5c5d025",
+              "type": "event_sessions"
+            },
+            {
+              "id": "8b483dbd-5f7a-4e77-8255-2a2ee04dd941",
+              "type": "event_sessions"
+            }
+          ]
+        },
+        "map": {
+          "data": {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "2dcbe4b2-a7f3-41ff-b08c-a201e5c5d025",
+      "type": "event_sessions",
+      "attributes": {
+        "title": "session2",
+        "description": "session2"
+      },
+      "relationships": {
+        "event": {
+          "data": {
+            "id": "9674661f-2725-4b0e-b39e-f36052902350",
+            "type": "events"
+          }
+        },
+        "speakers": {
+          "data": [
+            {
+              "id": "99166197-c058-4272-9af8-7f070ad782b2",
+              "type": "speakers"
+            }
+          ]
+        },
+        "area": {
+          "data": {
+            "id": "b83cbc23-4480-41f8-8b46-4d1a8f54d315",
+            "type": "areas"
+          }
+        }
+      }
+    },
+    {
+      "id": "8b483dbd-5f7a-4e77-8255-2a2ee04dd941",
+      "type": "event_sessions",
+      "attributes": {
+        "title": "session3",
+        "description": "session3"
+      },
+      "relationships": {
+        "event": {
+          "data": {
+            "id": "e5587cfc-230b-44e0-8d0d-d698919b045d",
+            "type": "events"
+          }
+        },
+        "speakers": {
+          "data": [
+            {
+              "id": "99166197-c058-4272-9af8-7f070ad782b2",
+              "type": "speakers"
+            }
+          ]
+        },
+        "area": {
+          "data": {
+            "id": "b83cbc23-4480-41f8-8b46-4d1a8f54d315",
+            "type": "areas"
+          }
+        }
+      }
+    },
+    {
+      "id": "023f9709-a5bb-4e9b-9bd4-83503bc7e499",
+      "type": "areas",
+      "attributes": {
+        "name": "area3",
+        "coordinates": {
+          "x": -223.9375,
+          "y": 336
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": []
+        },
+        "map": {
+          "data": {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "f45adb2e-e970-4ad4-96ab-0a949cc84294",
+      "type": "areas",
+      "attributes": {
+        "name": "area4",
+        "coordinates": {
+          "x": -27.9375,
+          "y": 284
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": []
+        },
+        "map": {
+          "data": {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "cc8c8a5c-d93b-46c0-9f5f-87dab463e1b2",
+      "type": "areas",
+      "attributes": {
+        "name": "area5",
+        "coordinates": {
+          "x": -452,
+          "y": 1012
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": []
+        },
+        "map": {
+          "data": {
+            "id": "9bfe2a52-6a85-4054-8d2e-49d59f3bbbfd",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "f3223b18-5da3-477f-9057-fa200e41f453",
+      "type": "areas",
+      "attributes": {
+        "name": "area6",
+        "coordinates": {
+          "x": -291.9375,
+          "y": 500
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": []
+        },
+        "map": {
+          "data": {
+            "id": "58ca8831-c6a0-4fac-9ad4-0d00e0b8f92b",
+            "type": "maps"
+          }
+        }
+      }
+    },
+    {
+      "id": "58ca8831-c6a0-4fac-9ad4-0d00e0b8f92b",
+      "type": "maps",
+      "attributes": {
+        "name": "map2",
+        "map": {
+          "url": "map2.jpeg"
+        }
+      },
+      "relationships": {
+        "location": {
+          "data": {
+            "id": "ea49f080-29f3-41f1-8db2-7ed3ea9d1e09",
+            "type": "locations"
+          }
+        },
+        "areas": {
+          "data": [
+            {
+              "id": "f3223b18-5da3-477f-9057-fa200e41f453",
+              "type": "areas"
+            },
+            {
+              "id": "c586c7e8-cfd3-4f78-95c7-311035b1fad5",
+              "type": "areas"
+            }
+          ]
+        }
+      },
+      "meta": {
+        "some_meta": true
+      }
+    },
+    {
+      "id": "c586c7e8-cfd3-4f78-95c7-311035b1fad5",
+      "type": "areas",
+      "attributes": {
+        "name": "area7",
+        "coordinates": {
+          "x": 168.0625,
+          "y": 584
+        }
+      },
+      "relationships": {
+        "event_sessions": {
+          "data": []
+        },
+        "map": {
+          "data": {
+            "id": "58ca8831-c6a0-4fac-9ad4-0d00e0b8f92b",
+            "type": "maps"
+          }
+        }
+      }
+    }
+  ]
+}

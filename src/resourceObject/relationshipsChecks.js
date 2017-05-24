@@ -1,4 +1,4 @@
-import { isObject, has, isNil, isEmpty, forEach } from 'lodash'
+import { isObject, has, isNil, isEmpty, forEach, forOwn } from 'lodash'
 import { linksMustBeObject, linksMustHaveAtLeast } from '../links'
 import { metaMustBeObject } from '../meta'
 import { isResourceIdentifier } from '../common'
@@ -13,23 +13,25 @@ function relationshipsMustBeObject (data) {
   )
 }
 
-function relationshipMustContain (relationship) {
-  invariant(
-    has(relationship, 'data') || has(relationship, 'links') || has(relationship, 'meta'),
-    `Malformed jsonapi model.\n
+function relationshipMustContain (relationships) {
+  forOwn(relationships, function (relationship) {
+    invariant(
+      has(relationship, 'data') || has(relationship, 'links') || has(relationship, 'meta'),
+      `Malformed jsonapi model.\n
      A "relationship object" MUST contain at least one of the following: links, data or meta.\n
      Visit: http://jsonapi.org/format/#document-resource-object-relationships`
-  )
+    )
 
-  if (has(relationship, 'links')) {
-    const {links} = relationship
-    linksMustBeObject(links)
-    linksMustHaveAtLeast(links)
-  }
-  if (has(relationship, 'meta')) {
-    const {meta} = relationship
-    metaMustBeObject(meta)
-  }
+    if (has(relationship, 'links')) {
+      const {links} = relationship
+      linksMustBeObject(links)
+      linksMustHaveAtLeast(links)
+    }
+    if (has(relationship, 'meta')) {
+      const {meta} = relationship
+      metaMustBeObject(meta)
+    }
+  })
 }
 
 function isResourceLinkage (resourceLinkage) {

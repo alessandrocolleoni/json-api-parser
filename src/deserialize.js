@@ -1,4 +1,4 @@
-import { clone, isUndefined, has } from 'lodash'
+import { isUndefined, has } from 'lodash'
 import invariant from 'fbjs/lib/invariant'
 
 import {
@@ -56,22 +56,14 @@ function deserialize (jsonApiModel) {
 
     const {attributes} = data
     let jsonModel = {...attributes, id: data.id, type: data.type}
-
     checkNestedRelationshipsOrLinks(attributes)
 
     if (has(data, 'relationships')) {
-      relationshipsMustBeObject(data)
-      const {relationships} = data
-      relationshipMustContain(relationships)
-      isResourceLinkage(relationships)
-      // TODO: Relationships checks
-      jsonModel.relationships = {...relationships}
+      jsonModel.relationships = relationshipsChecks(data)
     }
 
     if (has(data, 'meta')) {
-      const {meta} = data
-      metaMustBeObject(meta)
-      jsonApiModel.meta = {...meta}
+      jsonApiModel.meta = metaChecks(data)
     }
 
     if (links) {
@@ -108,10 +100,23 @@ function deserialize (jsonApiModel) {
  * @param jsonModel
  * @param jsonApiModel
  * @param includedData
+ * @param mapRelationships
  * @returns {*}
  */
 function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationships) {
   // TODO: refactor
+  /*
+  console.log('xxxxx')
+   forEach(jsonApiModel.relationships, curr => {
+   console.log(curr)
+   })
+   console.log('yyyyy')
+   forEach(jsonApiModel.relationships, (curr, xd) => {
+   console.log(curr)
+   console.log(xd)
+   })
+   */
+
   for (let key in jsonApiModel.relationships) {
     let relationshipData = jsonApiModel.relationships[key].data
     jsonModel.included[key] = {}
@@ -126,24 +131,18 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
             continue
           }
 
-          let itemConverted = clone(jsonApiModel.attributes)
-          itemConverted.id = itemIncludedJson.id
-
+          let itemConverted = {...jsonApiModel.attributes, id: itemIncludedJson.id}
           if (itemIncludedJson.meta) {
-            itemConverted.meta = clone(itemIncludedJson.meta)
+            itemConverted.meta = metaChecks(itemIncludedJson)
           }
 
           if (itemIncludedJson.relationships && !mapRelationships.has(actualRelationship.id)) {
             mapRelationships.set(actualRelationship.id, null)
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            relationshipsMustBeObject(itemIncludedJson)
-            const {relationships} = itemIncludedJson
-            relationshipMustContain(relationships)
-            isResourceLinkage(relationships)
-            itemConverted.relationships = clone(relationships)
+            itemConverted.relationships = relationshipsChecks(itemIncludedJson)
             mapRelationships.set(actualRelationship.id, itemConverted)
           } else if (itemIncludedJson.relationships && mapRelationships.get(actualRelationship.id)) {
-            itemConverted = mapRelationships[actualRelationship.id].data
+            itemConverted = mapRelationships[actualRelationship.id]
           }
 
           array.push(itemConverted)
@@ -155,24 +154,19 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
         let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === relationshipData.id)
 
         if (itemIncludedJson) {
-          itemConverted = clone(itemIncludedJson)
-          itemConverted.id = itemIncludedJson.id
+          itemConverted = {...itemIncludedJson, id: itemIncludedJson.id}
 
           if (itemIncludedJson.meta) {
-            itemConverted.meta = clone(itemIncludedJson.meta)
+            itemConverted.meta = metaChecks(itemIncludedJson)
           }
 
           if (itemIncludedJson.relationships && !mapRelationships.has(relationshipData.id)) {
             mapRelationships.set(relationshipData.id, null)
             itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            relationshipsMustBeObject(itemIncludedJson)
-            const {relationships} = itemIncludedJson
-            relationshipMustContain(relationships)
-            isResourceLinkage(relationships)
-            itemConverted.relationships = clone(relationships)
+            itemConverted.relationships = relationshipsChecks(itemIncludedJson)
             mapRelationships.set(relationshipData.id, itemConverted)
           } else if (itemIncludedJson.relationships && mapRelationships.get(relationshipData.id)) {
-            mapRelationships = mapRelationships[relationshipData.id].data
+            mapRelationships = mapRelationships[relationshipData.id]
           }
 
           jsonModel.included[key] = itemConverted
@@ -182,6 +176,20 @@ function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationship
   }
 
   return jsonModel.included
+}
+
+function relationshipsChecks (data) {
+  const {relationships} = data
+  relationshipsMustBeObject(data)
+  relationshipMustContain(relationships)
+  isResourceLinkage(relationships)
+  return {...relationships}
+}
+
+function metaChecks (data) {
+  const {meta} = data
+  metaMustBeObject(meta)
+  return {...meta}
 }
 
 export default deserialize
