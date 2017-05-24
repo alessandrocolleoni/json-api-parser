@@ -1,4 +1,4 @@
-import { isUndefined, has } from 'lodash'
+import { forEach, isUndefined, has } from 'lodash'
 import invariant from 'fbjs/lib/invariant'
 
 import {
@@ -104,78 +104,56 @@ function deserialize (jsonApiModel) {
  * @returns {*}
  */
 function populateInclude (jsonModel, jsonApiModel, includedData, mapRelationships) {
-  // TODO: refactor
-  /*
-  console.log('xxxxx')
-   forEach(jsonApiModel.relationships, curr => {
-   console.log(curr)
-   })
-   console.log('yyyyy')
-   forEach(jsonApiModel.relationships, (curr, xd) => {
-   console.log(curr)
-   console.log(xd)
-   })
-   */
-
-  for (let key in jsonApiModel.relationships) {
-    let relationshipData = jsonApiModel.relationships[key].data
+  forEach(jsonApiModel.relationships, (value, key) => {
+    let relationshipData = value.data
     jsonModel.included[key] = {}
 
-    if (relationshipData) {
-      if (Array.isArray(relationshipData)) {
-        let array = []
-        for (let actualRelationship of relationshipData) {
-          let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === actualRelationship.id)
-
-          if (!itemIncludedJson) {
-            continue
-          }
-
-          let itemConverted = {...jsonApiModel.attributes, id: itemIncludedJson.id}
-          if (itemIncludedJson.meta) {
-            itemConverted.meta = metaChecks(itemIncludedJson)
-          }
-
-          if (itemIncludedJson.relationships && !mapRelationships.has(actualRelationship.id)) {
-            mapRelationships.set(actualRelationship.id, null)
-            itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            itemConverted.relationships = relationshipsChecks(itemIncludedJson)
-            mapRelationships.set(actualRelationship.id, itemConverted)
-          } else if (itemIncludedJson.relationships && mapRelationships.get(actualRelationship.id)) {
-            itemConverted = mapRelationships[actualRelationship.id]
-          }
-
-          array.push(itemConverted)
+    if (relationshipData && Array.isArray(relationshipData)) {
+      let array = []
+      forEach(relationshipData, actualRelationship => {
+        let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === actualRelationship.id)
+        if (!itemIncludedJson) {
+          return
         }
 
-        jsonModel.included[key] = array
-      } else {
-        let itemConverted = {}
-        let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === relationshipData.id)
-
-        if (itemIncludedJson) {
-          itemConverted = {...itemIncludedJson, id: itemIncludedJson.id}
-
-          if (itemIncludedJson.meta) {
-            itemConverted.meta = metaChecks(itemIncludedJson)
-          }
-
-          if (itemIncludedJson.relationships && !mapRelationships.has(relationshipData.id)) {
-            mapRelationships.set(relationshipData.id, null)
-            itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
-            itemConverted.relationships = relationshipsChecks(itemIncludedJson)
-            mapRelationships.set(relationshipData.id, itemConverted)
-          } else if (itemIncludedJson.relationships && mapRelationships.get(relationshipData.id)) {
-            mapRelationships = mapRelationships[relationshipData.id]
-          }
-
-          jsonModel.included[key] = itemConverted
+        let itemConverted = {...jsonApiModel.attributes, id: itemIncludedJson.id}
+        if (itemIncludedJson.meta) {
+          itemConverted.meta = metaChecks(itemIncludedJson)
         }
+
+        nestedIncluded(itemIncludedJson, itemConverted, mapRelationships, actualRelationship, includedData)
+        array.push(itemConverted)
+      })
+
+      jsonModel.included[key] = array
+    } else if (relationshipData) {
+      let itemIncludedJson = includedData.find(candidateItem => candidateItem.id === relationshipData.id)
+      if (!itemIncludedJson) {
+        return
       }
+
+      let itemConverted = {...itemIncludedJson, id: itemIncludedJson.id}
+      if (itemIncludedJson.meta) {
+        itemConverted.meta = metaChecks(itemIncludedJson)
+      }
+
+      nestedIncluded(itemIncludedJson, itemConverted, mapRelationships, relationshipData, includedData)
+      jsonModel.included[key] = itemConverted
     }
-  }
+  })
 
   return jsonModel.included
+}
+
+function nestedIncluded (itemIncludedJson, itemConverted, mapRelationships, relationship, includedData) {
+  if (itemIncludedJson.relationships && !mapRelationships.has(relationship.id)) {
+    mapRelationships.set(relationship.id, null)
+    itemConverted.included = populateInclude({included: {}}, itemIncludedJson, includedData, mapRelationships)
+    itemConverted.relationships = relationshipsChecks(itemIncludedJson)
+    mapRelationships.set(relationship.id, itemConverted)
+  } else if (itemIncludedJson.relationships && mapRelationships.get(relationship.id)) {
+    itemConverted = mapRelationships.get(relationship.id)
+  }
 }
 
 function relationshipsChecks (data) {
