@@ -32,6 +32,11 @@ import {
   metaMustBeObject
 } from './meta'
 
+import {
+  errorsIsArray,
+  errorsAcceptedFields
+} from './errors'
+
 function deserialize (jsonApiModel) {
   checkIsObject(jsonApiModel)
 
@@ -46,19 +51,20 @@ function deserialize (jsonApiModel) {
     checkIdAndType(data)
     checkCommonNamespace(data)
   } else {
-    data.forEach(resource => {
+    forEach(data, resource => {
       checkResourceArray(resource)
       checkIdAndType(resource)
       checkCommonNamespace(resource)
     })
   }
 
+  let jsonModel = {}
   // TODO: refactor with errors
   if (data) {
     attributesMustBeObject(data)
 
     const {attributes} = data
-    let jsonModel = {...attributes, id: data.id, type: data.type}
+    jsonModel = {...attributes, id: data.id, type: data.type}
     checkNestedRelationshipsOrLinks(attributes)
 
     if (has(data, 'relationships')) {
@@ -85,8 +91,16 @@ function deserialize (jsonApiModel) {
     return jsonModel
   }
 
+  if (errors) {
+    errorsIsArray(errors)
+    forEach(errors, error => {
+      errorsAcceptedFields(error)
+    })
+    jsonModel = {...errors}
+  }
+
   // TODO: errors
-  return {}
+  return jsonModel
 }
 
 /**

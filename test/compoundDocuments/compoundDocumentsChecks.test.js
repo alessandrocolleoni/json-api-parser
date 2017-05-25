@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import { includedUndefinedOrArray } from '../../src/compoundDocuments'
 
-describe('"Links":', () => {
+describe('"Compound document":', () => {
   describe('In a compound document, all included resources MUST be represented as an array of resource objects in a top-level included member.', () => {
     it('should raise error on null', () => {
       // Setup
