@@ -1,5 +1,4 @@
-import { forEach, isUndefined, has } from 'lodash'
-import invariant from 'fbjs/lib/invariant'
+import { forEach, has } from 'lodash'
 
 import {
   checkIsObject,
@@ -19,6 +18,10 @@ import {
   relationshipMustContain,
   isResourceLinkage
 } from './resourceObject'
+
+import {
+  includedUndefinedOrArray
+} from './compoundDocuments'
 
 import {
   linksMustBeObject,
@@ -72,13 +75,7 @@ function deserialize (jsonApiModel) {
       jsonApiModel.links = {...links}
     }
 
-    invariant(
-      isUndefined(jsonApiModel.included) || Array.isArray(jsonApiModel.included),
-      `Malformed jsonapi model.\n
-      In a compound document, all included resources MUST be represented as an array of resource objects in a top-level included member.\n
-      Visit: http://jsonapi.org/format/#document-compound-documents`
-    )
-
+    includedUndefinedOrArray(jsonApiModel.included)
     if (included && included.length > 0) {
       const incl = [].concat(jsonApiModel.included)
       let mapRelationships = new Map()

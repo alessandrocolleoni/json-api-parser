@@ -34,7 +34,7 @@ describe('Deserialize json Api to json', () => {
 
   it('should deserialize with included', () => {
     let toDeserialize = complexJson
-    console.log(deserialize(toDeserialize))
+    deserialize(toDeserialize)
   })
 })
 
