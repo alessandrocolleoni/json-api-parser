@@ -5,8 +5,8 @@ function attributesMustBeObject (data) {
   invariant(
     !has(data, 'attributes') || isObject(data.attributes),
     `Malformed jsonapi model.\n
-       The value of the attributes key MUST be an object.\n
-       Visit: http://jsonapi.org/format/#document-resource-object-attributes`
+     The value of the attributes key MUST be an object.\n
+     Visit: http://jsonapi.org/format/#document-resource-object-attributes`
   )
 }
 

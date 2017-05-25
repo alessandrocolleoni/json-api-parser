@@ -46,49 +46,21 @@ function deserialize (jsonApiModel) {
   checkDataAndErrosNotCoexist({data, errors})
   checkIncludedNotPresent({data, included})
 
+  let jsonModel = {}
   if (!Array.isArray(data)) {
     checkResourceIdentifierOrNull(data)
     checkIdAndType(data)
     checkCommonNamespace(data)
+    attributesMustBeObject(data)
+    jsonModel = convertData(data, {links, included})
   } else {
+    jsonModel = []
     forEach(data, resource => {
       checkResourceArray(resource)
       checkIdAndType(resource)
       checkCommonNamespace(resource)
+      jsonModel.push(convertData(data, {included}))
     })
-  }
-
-  let jsonModel = {}
-  // TODO: refactor with errors
-  if (data) {
-    attributesMustBeObject(data)
-
-    const {attributes} = data
-    jsonModel = {...attributes, id: data.id, type: data.type}
-    checkNestedRelationshipsOrLinks(attributes)
-
-    if (has(data, 'relationships')) {
-      jsonModel.relationships = relationshipsChecks(data)
-    }
-
-    if (has(data, 'meta')) {
-      jsonApiModel.meta = metaChecks(data)
-    }
-
-    if (links) {
-      linksMustBeObject(links)
-      linksMustHaveAtLeast(links)
-      jsonApiModel.links = {...links}
-    }
-
-    includedUndefinedOrArray(jsonApiModel.included)
-    if (included && included.length > 0) {
-      const incl = [].concat(jsonApiModel.included)
-      let mapRelationships = new Map()
-      jsonModel.included = {}
-      jsonModel.included = populateInclude(jsonModel, data, incl, mapRelationships)
-    }
-    return jsonModel
   }
 
   if (errors) {
@@ -99,7 +71,35 @@ function deserialize (jsonApiModel) {
     jsonModel = {...errors}
   }
 
-  // TODO: errors
+  return jsonModel
+}
+
+function convertData (data, {links, included} = {}) {
+  const {attributes} = data
+  let jsonModel = {...attributes, id: data.id, type: data.type}
+  checkNestedRelationshipsOrLinks(attributes)
+
+  if (has(data, 'relationships')) {
+    jsonModel.relationships = relationshipsChecks(data)
+  }
+
+  if (has(data, 'meta')) {
+    jsonModel.meta = metaChecks(data)
+  }
+
+  if (links) {
+    linksMustBeObject(links)
+    linksMustHaveAtLeast(links)
+    jsonModel.links = {...links}
+  }
+
+  includedUndefinedOrArray(included)
+  if (included && included.length > 0) {
+    const incl = [].concat(included)
+    let mapRelationships = new Map()
+    jsonModel.included = {}
+    jsonModel.included = populateInclude(jsonModel, data, incl, mapRelationships)
+  }
   return jsonModel
 }
 
