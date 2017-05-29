@@ -80,7 +80,17 @@ function convertData (data, {links, included} = {}) {
   checkNestedRelationshipsOrLinks(attributes)
 
   if (has(data, 'relationships')) {
-    jsonModel.relationships = relationshipsChecks(data)
+    const {relationships} = data
+    jsonModel.relationships = {}
+    relationshipsChecks(data, relationships)
+    forEach(relationships, (value, key) => {
+      const {data} = value
+      if (Array.isArray(data)) {
+        jsonModel.relationships[key] = [].concat(data)
+      } else {
+        jsonModel.relationships[key] = {...data}
+      }
+    })
   }
 
   if (has(data, 'meta')) {
@@ -167,12 +177,10 @@ function nestedIncluded (itemIncludedJson, itemConverted, mapRelationships, rela
   }
 }
 
-function relationshipsChecks (data) {
-  const {relationships} = data
+function relationshipsChecks (data, relationships) {
   relationshipsMustBeObject(data)
   relationshipMustContain(relationships)
   isResourceLinkage(relationships)
-  return {...relationships}
 }
 
 function metaChecks (data) {

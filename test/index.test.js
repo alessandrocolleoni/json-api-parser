@@ -9,7 +9,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import { serialize, deserialize } from '../src/index'
-import complexJson from './test-data-complex-deserialize.json'
 
 describe('Deserialize json Api to json', () => {
   const toDeserialize = {
@@ -20,6 +19,14 @@ describe('Deserialize json Api to json', () => {
         'name': 'Awesome app',
         'owner_id': 'e1fdbc0e-bb58-4ee1-9258-509d9b6f334c',
         'api_key': 'aHanApYk3y'
+      },
+      'relationships': {
+        'user': {
+          'data': {
+            'id': 1,
+            'type': 'users'
+          }
+        }
       }
     }
   }
@@ -29,12 +36,7 @@ describe('Deserialize json Api to json', () => {
 
     expect(deserialized.id).to.equal('80ab0682-e7d1-4800-b12a-efca9e2f15c0')
     expect(deserialized.type).to.equal('apps')
-    expect(Object.keys(deserialized).length).to.equal(5)
-  })
-
-  it('should deserialize with included', () => {
-    let toDeserialize = complexJson
-    deserialize(toDeserialize)
+    expect(Object.keys(deserialized).length).to.equal(6)
   })
 })
 
@@ -93,14 +95,94 @@ describe('Serialize json to json Api', () => {
     expect(serialized.data).to.be.an('object')
     expect(serialized.data.relationships).to.be.an('object')
     expect(serialized.data.relationships.user).to.be.an('object')
-    expect(serialized.data.relationships.user.id).to.equal('e1fdbc0e-bb58-4ee1-9258-509d9b6f334b')
-    expect(serialized.data.relationships.user.type).to.equal('users')
+    expect(serialized.data.relationships.user.data.id).to.equal('e1fdbc0e-bb58-4ee1-9258-509d9b6f334b')
+    expect(serialized.data.relationships.user.data.type).to.equal('users')
+
+    expect(serialized.meta).to.be.an('undefined')
+    expect(serialized.included).to.be.an('undefined')
+  })
+
+  it('should serialize object with relationship array', () => {
+    const toSerialize = {
+      'id': '80ab0682-e7d1-4800-b12a-efca9e2f15c0',
+      'type': 'apps',
+      'name': 'Awesome app',
+      'relationships': {
+        'users': [
+          {
+            'id': 'e1fdbc0e-bb58-4ee1-9258-509d9b6f334b',
+            'type': 'users'
+          },
+          {
+            'id': 'e1fdbc0e-bb58-4ee1-9258-509d9b6f334c',
+            'type': 'users'
+          },
+          {
+            'id': 'e1fdbc0e-bb58-4ee1-9258-509d9b6f334d',
+            'type': 'users'
+          }
+        ]
+      },
+      'meta': {
+        'count': 10
+      },
+      'included': {
+        'id': 'da465173-2a99-4cdf-b43f-4164b14ad5a7',
+        'type': 'areas',
+        'attributes': {
+          'name': 'asdasd',
+          'coordinates': {
+            'x': 240.0625,
+            'y': 560
+          }
+        }
+      }
+    }
+
+    const serialized = serialize(toSerialize)
+    expect(serialized.data).to.be.an('object')
+    expect(serialized.data.relationships).to.be.an('object')
+    expect(serialized.data.relationships.users.data).to.be.an('array')
 
     expect(serialized.meta).to.be.an('undefined')
     expect(serialized.included).to.be.an('undefined')
   })
 
   it('should serialize object with multiple relationships', () => {
+    const toSerialize = {
+      'id': '80ab0682-e7d1-4800-b12a-efca9e2f15c0',
+      'type': 'apps',
+      'name': 'Awesome app',
+      'relationships': {
+        'user': {
+          'id': 'e1fdbc0e-bb58-4ee1-9258-509d9b6f334b',
+          'type': 'users'
+        }
+      },
+      'meta': {
+        'count': 10
+      },
+      'included': {
+        'id': 'da465173-2a99-4cdf-b43f-4164b14ad5a7',
+        'type': 'areas',
+        'attributes': {
+          'name': 'asdasd',
+          'coordinates': {
+            'x': 240.0625,
+            'y': 560
+          }
+        }
+      }
+    }
 
+    const serialized = serialize(toSerialize)
+    expect(serialized.data).to.be.an('object')
+    expect(serialized.data.relationships).to.be.an('object')
+    expect(serialized.data.relationships.user).to.be.an('object')
+    expect(serialized.data.relationships.user.data.id).to.equal('e1fdbc0e-bb58-4ee1-9258-509d9b6f334b')
+    expect(serialized.data.relationships.user.data.type).to.equal('users')
+
+    expect(serialized.meta).to.be.an('undefined')
+    expect(serialized.included).to.be.an('undefined')
   })
 })
