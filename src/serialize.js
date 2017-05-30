@@ -5,17 +5,16 @@ import {
 } from './resourceObject'
 
 function serialize (jsonModel) {
-  let jsonApiModel = {
-    data: {
-      attributes: {}
-    }
-  }
-
   let jsonModelClone = cloneDeep(jsonModel)
   let {relationships} = jsonModelClone
 
-  jsonApiModel.data.id = jsonModelClone.id
-  jsonApiModel.data.type = jsonModelClone.type
+  let jsonApiModel = {
+    data: {
+      id: jsonModelClone.id,
+      type: jsonModelClone.type,
+      attributes: {}
+    }
+  }
 
   checkIdAndType(jsonApiModel.data)
 
@@ -25,9 +24,7 @@ function serialize (jsonModel) {
   delete jsonModelClone.included
   delete jsonModelClone.meta
 
-  forEach(jsonModelClone, (value, key) => {
-    jsonApiModel.data.attributes[key] = value
-  })
+  jsonApiModel.data.attributes = {...jsonModelClone}
 
   if (relationships) {
     jsonApiModel.data.relationships = {}
