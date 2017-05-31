@@ -1,4 +1,4 @@
-import { forEach, has } from 'lodash'
+import { forEach, has, set } from 'lodash'
 
 import {
   checkIsObject,
@@ -81,15 +81,10 @@ function convertData (data, {links, included} = {}) {
 
   if (has(data, 'relationships')) {
     const {relationships} = data
-    jsonModel.relationships = {}
     relationshipsChecks(data, relationships)
     forEach(relationships, (value, key) => {
       const {data} = value
-      if (Array.isArray(data)) {
-        jsonModel.relationships[key] = [].concat(data)
-      } else {
-        jsonModel.relationships[key] = {...data}
-      }
+      set(jsonModel, `relationships.${key}`, Array.isArray(data) ? [].concat(data) : {...data})
     })
   }
 

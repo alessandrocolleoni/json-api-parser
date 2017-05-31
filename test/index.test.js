@@ -37,6 +37,7 @@ describe('Deserialize json Api to json', () => {
     expect(deserialized.id).to.equal('80ab0682-e7d1-4800-b12a-efca9e2f15c0')
     expect(deserialized.type).to.equal('apps')
     expect(Object.keys(deserialized).length).to.equal(6)
+    console.log(deserialized)
   })
 })
 
@@ -97,7 +98,6 @@ describe('Serialize json to json Api', () => {
     expect(serialized.data.relationships.user).to.be.an('object')
     expect(serialized.data.relationships.user.data.id).to.equal('e1fdbc0e-bb58-4ee1-9258-509d9b6f334b')
     expect(serialized.data.relationships.user.data.type).to.equal('users')
-
     expect(serialized.meta).to.be.an('undefined')
     expect(serialized.included).to.be.an('undefined')
   })
@@ -143,7 +143,6 @@ describe('Serialize json to json Api', () => {
     expect(serialized.data).to.be.an('object')
     expect(serialized.data.relationships).to.be.an('object')
     expect(serialized.data.relationships.users.data).to.be.an('array')
-
     expect(serialized.meta).to.be.an('undefined')
     expect(serialized.included).to.be.an('undefined')
   })
@@ -181,7 +180,6 @@ describe('Serialize json to json Api', () => {
     expect(serialized.data.relationships.user).to.be.an('object')
     expect(serialized.data.relationships.user.data.id).to.equal('e1fdbc0e-bb58-4ee1-9258-509d9b6f334b')
     expect(serialized.data.relationships.user.data.type).to.equal('users')
-
     expect(serialized.meta).to.be.an('undefined')
     expect(serialized.included).to.be.an('undefined')
   })

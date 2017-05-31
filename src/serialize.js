@@ -1,4 +1,4 @@
-import { forEach, cloneDeep, map } from 'lodash'
+import { forEach, cloneDeep, map, set } from 'lodash'
 
 import {
   checkIdAndType
@@ -30,9 +30,9 @@ function serialize (jsonModel) {
     jsonApiModel.data.relationships = {}
     forEach(relationships, (relationship, key) => {
       if (Array.isArray(relationship)) {
-        jsonApiModel.data.relationships[key] = {data: map(relationship, value => ({id: value.id, type: value.type}))}
+        set(jsonApiModel, `data.relationships.${key}`, {data: map(relationship, value => ({id: value.id, type: value.type}))})
       } else {
-        jsonApiModel.data.relationships[key] = {data: {id: relationship.id, type: relationship.type}}
+        set(jsonApiModel, `data.relationships.${key}`, {data: {id: relationship.id, type: relationship.type}})
       }
     })
   }
