@@ -34,3 +34,21 @@ describe('"Resource objects" - Fields:', () => {
     })
   })
 })
+
+describe('"Resource objects" - extras', () => {
+  it('should handle "null" values', () => {
+    expect(() => checkCommonNamespace(null)).not.to.throw()
+  })
+
+  it('should handle "undefined" values', () => {
+    expect(() => checkCommonNamespace(undefined)).not.to.throw()
+  })
+
+  it('should handle "undefined" relationships', () => {
+    // Setup
+    const document = { data: { attributes: 'test' } }
+
+    // Expectations
+    expect(() => checkCommonNamespace(document)).not.to.throw()
+  })
+})

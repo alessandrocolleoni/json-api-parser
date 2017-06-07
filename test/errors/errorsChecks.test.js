@@ -31,7 +31,7 @@ describe('"Errors":', () => {
     })
   })
 
-  describe('', () => {
+  describe('Accepted fields', () => {
     it('should raise error on non accepted field', () => {
       const document = {
         errors: [
@@ -42,7 +42,51 @@ describe('"Errors":', () => {
       }
 
       document.errors.forEach(error => {
-        expect(() => errorsAcceptedFields(error).to.throw(/An error object MAY have the following members: id, links, status, code, title, detail, source, meta/))
+        expect(() => errorsAcceptedFields(error)).to.throw(/An error object MAY have the following members: id, links, status, code, title, detail, source, meta/)
+      })
+    })
+
+    it('should check links', () => {
+      const document = {
+        errors: [
+          {
+            links: {
+              self: 'protocol://url'
+            }
+          }
+        ]
+      }
+
+      document.errors.forEach(error => {
+        expect(() => errorsAcceptedFields(error)).to.throw(/A links object containing the following members: about/)
+      })
+    })
+
+    it('should check meta', () => {
+      const document = {
+        errors: [
+          {
+            meta: 'protocol://url'
+          }
+        ]
+      }
+
+      document.errors.forEach(error => {
+        expect(() => errorsAcceptedFields(error)).to.throw(/The value of each meta member MUST be an object/)
+      })
+    })
+
+    it('should accept error', () => {
+      const document = {
+        errors: [
+          {
+            id: 'error-id'
+          }
+        ]
+      }
+
+      document.errors.forEach(error => {
+        expect(() => errorsAcceptedFields(error)).not.to.throw()
       })
     })
   })

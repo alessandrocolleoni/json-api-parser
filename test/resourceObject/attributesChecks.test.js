@@ -141,3 +141,13 @@ describe('"Resource objects" - Attributes:', () => {
     })
   })
 })
+
+describe('"Resource objects" - extras', () => {
+  it('should handle "null" values', () => {
+    expect(() => checkNestedRelationshipsOrLinks(null)).not.to.throw()
+  })
+
+  it('should handle "undefined" values', () => {
+    expect(() => checkNestedRelationshipsOrLinks(undefined)).not.to.throw()
+  })
+})

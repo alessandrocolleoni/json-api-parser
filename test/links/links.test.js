@@ -42,5 +42,31 @@ describe('"Links":', () => {
       }
       expect(() => linksMustHaveAtLeast(document.links)).to.throw(/An “link object” which can contain the following members: href or meta/)
     })
+
+    describe('should accept either:', () => {
+      it('an \'href\' attribute', () => {
+        const document = {
+          'links': {
+            'self': 'uri',
+            'related': {
+              'href': 'protocol://uri'
+            }
+          }
+        }
+        expect(() => linksMustHaveAtLeast(document.links)).not.to.throw()
+      })
+
+      it('a \'meta\' attribute', () => {
+        const document = {
+          'links': {
+            'self': 'uri',
+            'related': {
+              'meta': {}
+            }
+          }
+        }
+        expect(() => linksMustHaveAtLeast(document.links)).not.to.throw()
+      })
+    })
   })
 })

@@ -33,5 +33,14 @@ describe('"Meta":', () => {
       // Expectations
       expect(() => metaMustBeObject(document.meta)).to.throw(/The value of each meta member MUST be an object/)
     })
+
+    it('should accept object', () => {
+      // Setup
+      const document = {
+        'meta': {}
+      }
+      // Expectations
+      expect(() => metaMustBeObject(document.meta)).not.to.throw()
+    })
   })
 })
