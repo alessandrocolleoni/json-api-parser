@@ -1,4 +1,4 @@
-import { conformsTo, isNil, isNull } from 'lodash'
+import { isNull } from 'lodash'
 import { isResourceIdentifier } from '../common'
 import invariant from 'fbjs/lib/invariant'
 
