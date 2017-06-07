@@ -47,6 +47,8 @@
     "istanbul": "^1.1.0-alpha.1",
     "lodash": "^4.17.4",
     "mocha": "^3.1.2",
+    "nyc": "^11.0.2",
+    "rimraf": "^2.6.1",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
     "sinon": "^2.0.0-pre.3",
@@ -54,16 +56,17 @@
     "standard": "*"
   },
   "scripts": {
+    "clean": "rimraf './dist/' './.nyc_output/' './coverage/'",
     "lint": "standard './src/**.js' './test/**.js' | snazzy",
     "lint:fix": "standard --fix './src/**.js' './test/**.js' | snazzy",
     "pretest": "npm run lint",
     "test": "mocha --compilers js:babel-register --recursive",
     "test:watch": "mocha --compilers js:babel-register --reporter min --watch",
-    "test:cover": "babel-node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha",
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "test:cover": "nyc --reporter=html --reporter=text npm test",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "prebuild": "npm run test",
     "build": "node tools/build",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "standard": {
     "parser": "babel-eslint"
