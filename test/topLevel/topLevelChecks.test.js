@@ -58,6 +58,24 @@ describe('Top Level:', () => {
       // Expectations
       expect(() => { checkDataAndErrosNotCoexist(document) }).to.throw(/The members data and errors MUST NOT coexist in the same document./)
     })
+
+    it('should accept data-only document', () => {
+      // Setup
+      const document = {
+        data: testData.fakeDataResourceIdentifier
+      }
+      // Expectations
+      expect(() => { checkDataAndErrosNotCoexist(document) }).not.to.throw()
+    })
+
+    it('should accept errors-only document', () => {
+      // Setup
+      const document = {
+        errors: testData.fakeErrorObject
+      }
+      // Expectations
+      expect(() => { checkDataAndErrosNotCoexist(document) }).not.to.throw()
+    })
   })
 
   describe('If a document does not contain a top-level data key, the included member MUST NOT be present either.', () => {

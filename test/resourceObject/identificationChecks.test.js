@@ -40,5 +40,23 @@ describe('"Resource objects" - Identification:', () => {
       // Expectations
       expect(() => { checkIdAndType(document.data) }).to.throw(/The values of the id and type members MUST be strings./)
     })
+
+    it('should accept "null" resource', () => {
+      // Setup
+      const document = {
+        'data': null
+      }
+      // Expectations
+      expect(() => { checkIdAndType(document.data) }).not.to.throw()
+    })
+
+    it('should accept "undefined" resource', () => {
+      // Setup
+      const document = {
+        'data': undefined
+      }
+      // Expectations
+      expect(() => { checkIdAndType(document.data) }).not.to.throw()
+    })
   })
 })

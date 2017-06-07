@@ -29,6 +29,11 @@ describe('"Errors":', () => {
       const document = {errors: {}}
       expect(() => errorsIsArray(document.errors)).to.throw(/Error objects MUST be returned as an array keyed by errors in the top level of a JSON API document/)
     })
+
+    it('sould accept array', () => {
+      const document = { errors: [] }
+      expect(() => errorsIsArray(document.errors)).not.to.throw()
+    })
   })
 
   describe('Accepted fields', () => {
@@ -81,6 +86,24 @@ describe('"Errors":', () => {
         errors: [
           {
             id: 'error-id'
+          }
+        ]
+      }
+
+      document.errors.forEach(error => {
+        expect(() => errorsAcceptedFields(error)).not.to.throw()
+      })
+    })
+
+    it('should accept error links with about', () => {
+      const document = {
+        errors: [
+          {
+            id: 'error-id',
+            links: {
+              self: 'protocol://uri',
+              about: 'about this error'
+            }
           }
         ]
       }

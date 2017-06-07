@@ -71,4 +71,34 @@ describe('The document’s "primary data" is a representation of the resource or
       })
     })
   })
+
+  describe('Primary data MUST raise error for:', () => {
+    it('- an Invalid resource identifier', () => {
+      // Setup
+      const document = {
+        'data': {
+          'attributes': {
+            'attr': 'value'
+          }
+        }
+      }
+      // Expectations
+      expect(() => { checkResourceIdentifierOrNull(document.data) }).to.throw(/Primary data MUST be either: a single resource object, a single resource identifier object, or null, for requests that target single resources/)
+    })
+
+    it('- an array with an Invalid resource object', () => {
+      // Setup
+      const document = {
+        'data': [
+          {
+            'test': 'error'
+          }
+        ]
+      }
+      // Expectations
+      document.data.forEach(resource => {
+        expect(() => { checkResourceArray(resource) }).to.throw(/Primary data MUST be either: an array of resource objects, an array of resource identifier objects, or an empty array/)
+      })
+    })
+  })
 })

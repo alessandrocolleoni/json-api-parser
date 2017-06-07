@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
-import {deserialize} from '../../src/index'
 import { relationshipsMustBeObject, relationshipMustContain, isResourceLinkage } from '../../src/resourceObject'
 import testData from '../test-data.json'
 
